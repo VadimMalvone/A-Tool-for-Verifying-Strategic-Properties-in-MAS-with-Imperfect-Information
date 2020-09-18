@@ -1,0 +1,13 @@
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/State.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/JsonObject.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AgentAction.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Group.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Transition.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Formula.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/App.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java
+/applications/workspaces/java/abstraction_workspace/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Agent.java
