@@ -12,7 +12,11 @@ public class TransformBean {
 	private String mcmasMayAtlModel;
 	private String mcmasOutputMustAtlModel;
 	private String mcmasOutputMayAtlModel;
+	private Boolean result;
 
+	public Boolean getResult() { return result; }
+
+	public void setResult(Boolean result) { this.result = result; }
 
 	public String getAtlModel() {
 		return atlModel;

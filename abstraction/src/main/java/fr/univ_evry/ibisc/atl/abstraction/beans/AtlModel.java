@@ -87,7 +87,11 @@ public class AtlModel extends JsonObject {
 		}
 		return stateMap;
 	}
-	
+
+	public void setStateMap(Map<String, State> map) {
+		this.stateMap = map;
+	}
+
 	public State getState(String stateName) {
 		return getStateMap().get(stateName);
 	}

@@ -11,7 +11,7 @@
 			button {
 				margin: 4px;
 				cursor: pointer;
-				font-size: 70%; font-family; arial ,sans-serif;
+				font-size: 70%; font-family: arial ,sans-serif;
 				margin-right: 5px
 			}
 		</style>
@@ -33,7 +33,7 @@
 				</tr>
 				<tr>
 					<td>
-						<form action="#" th:action="@{/}" th:object="${transformBean}" method="post">
+						<form action="#" th:action="@{/Transform}" th:object="${transformBean}" method="post">
 							<table>
 								<tr>
 									<td><textarea rows="24" cols="80" th:field="*{atlModel}" style="background-color: #eaeae1"></textarea></td>
@@ -47,23 +47,30 @@
 				</tr>
 				<tr>
 					<td>
-						&nbsp;
+						<div style="text-align: center">
+						&nbsp;<button id="generate_btn" style="font-size: 120%">Generate Graph</button><br>
+						 <button id="must_generate_btn" style="font-size: 120%">Generate Graph</button><br>
+						 <button id="may_generate_btn" style="font-size: 120%">Generate Graph</button>
+							<form action="#" th:action="@{/Refine}" th:object="${transformBean}" method="post">
+								<input type="submit" value="Refine" style="font-size: 120%" />
+							</form>
+						</div>
 					</td>
-					<td><textarea id="graphviz_data_must_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasMustAtlModel}]]</textarea></td>
-					<td><textarea id="graphviz_data_may_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasMayAtlModel}]]</textarea></td>
+<!--					<td><textarea id="graphviz_data_must_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasMustAtlModel}]]</textarea></td>-->
+<!--					<td><textarea id="graphviz_data_may_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasMayAtlModel}]]</textarea></td>-->
 				</tr>
 				<tr>
 					<td>
-						&nbsp;
+						&nbsp;Result: [[${transformBean.result == null ? "?" : transformBean.result}]]
 					</td>
 					<td><textarea id="graphviz_data_must_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasOutputMustAtlModel}]]</textarea></td>
 					<td><textarea id="graphviz_data_may_mcmas" rows="20" cols="80" width="100%" wrap="off" readonly style="background-color: #eaeae1">[[${transformBean.mcmasOutputMayAtlModel}]]</textarea></td>
 				</tr>
-				<tr>
+				<!--<tr>
 					<td><button id="generate_btn" style="font-size: 120%">Generate Graph</button></td>
 					<td><button id="must_generate_btn" style="font-size: 120%">Generate Graph</button></td>
 					<td><button id="may_generate_btn" style="font-size: 120%">Generate Graph</button></td>
-				</tr>
+				</tr>-->
 				<tr>
 					<td><div id="graphviz_svg_div" /></td>
 					<td><div id="must_graphviz_svg_div" /></td>

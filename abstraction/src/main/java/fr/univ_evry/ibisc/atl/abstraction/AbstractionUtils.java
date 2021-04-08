@@ -27,7 +27,7 @@ import fr.univ_evry.ibisc.atl.abstraction.beans.Transition;
 
 public class AbstractionUtils {
 	
-    private static final String MODEL_JSON_FILE_NAME = "";
+    private static final String MODEL_JSON_FILE_NAME = "modelKR.json";
 	private final static Log logger = LogFactory.getLog(AbstractionUtils.class);
 
 	public static List<StateCluster> getStateClusters(AtlModel atlModel) {
@@ -71,14 +71,7 @@ public class AbstractionUtils {
 		for (StateCluster fromStateCluster : stateClusters) {
 			for (StateCluster toStateCluster : stateClusters) {
 				List<List<AgentAction>> agentActions = fromStateCluster.hasMayTransition(toStateCluster, atlModel);
-				if (!agentActions.isEmpty()) {
-					removeDuplicates(agentActions);
-					Transition transition = new Transition();
-					transition.setFromState(fromStateCluster.getName());
-					transition.setToState(toStateCluster.getName());
-					transition.setAgentActions(agentActions);
-					transitions.add(transition);
-				}
+				createTransition(fromStateCluster, transitions, toStateCluster, agentActions);
 			}
 		}
 		
@@ -90,14 +83,7 @@ public class AbstractionUtils {
 		for (StateCluster fromStateCluster : stateClusters) {
 			for (StateCluster toStateCluster : stateClusters) {
 				List<List<AgentAction>> agentActions = fromStateCluster.hasMustTransition(toStateCluster, atlModel);
-				if (!agentActions.isEmpty()) {
-					removeDuplicates(agentActions);
-					Transition transition = new Transition();
-					transition.setFromState(fromStateCluster.getName());
-					transition.setToState(toStateCluster.getName());
-					transition.setAgentActions(agentActions);
-					transitions.add(transition);
-				}
+				createTransition(fromStateCluster, transitions, toStateCluster, agentActions);
 			}
 		}
 		
@@ -423,11 +409,11 @@ public class AbstractionUtils {
 
 		stringBuilder.append("Formulae").append(System.lineSeparator());
 		stringBuilder.append("\t");
-		if (isMayModel)
-			stringBuilder.append("!(");
+//		if (isMayModel)
+//			stringBuilder.append("!(");
 		stringBuilder.append("<").append(atlModel.getGroup().getName()).append(">").append(atlModel.getFormula().getSubformula());
-		if (isMayModel)
-			stringBuilder.append(")");
+//		if (isMayModel)
+//			stringBuilder.append(")");
 		stringBuilder.append(";").append(System.lineSeparator());
 		stringBuilder.append("end Formulae").append(System.lineSeparator());
 
@@ -460,12 +446,151 @@ public class AbstractionUtils {
 	}
 
 	public static String modelCheck(String mcmasFilePath) throws IOException {
-		try(Scanner scanner = new Scanner(Runtime.getRuntime().exec("/home/ec2-user/mcmas-linux64-1.3.0 " + mcmasFilePath).getInputStream()).useDelimiter("\\A")) {
+		try(Scanner scanner = new Scanner(Runtime.getRuntime().exec("/media/angelo/WorkData/mcmas-1.3.0/mcmas " + mcmasFilePath).getInputStream()).useDelimiter("\\A")) {
 			return scanner.hasNext() ? scanner.next() : "";
 		}
 	}
 
 	public static boolean getMcmasResult(String mcmasOutput) {
 		return  (mcmasOutput.contains("is TRUE in the model"));
+	}
+
+	public enum Abstraction { May, Must }
+
+	public static void refinement(AtlModel abstractModel, AtlModel model, StateCluster failureState, Abstraction kind) {
+		Map<State, Map<State, Boolean>> m = new HashMap<>();
+		for(State s1 : failureState.getChildStates()) {
+			Map<State, Boolean> auxMap = new HashMap<>();
+			for(State s2 : failureState.getChildStates()) {
+				auxMap.put(s2, true);
+			}
+			m.put(s1, auxMap);
+		}
+		check1(abstractModel, model, failureState, m);
+		boolean update = true;
+		while(update) {
+			update = check2(abstractModel, failureState, m);
+		}
+		for(State s1 : failureState.getChildStates()) {
+			for (State s2 : failureState.getChildStates()) {
+				//if(s1.equals(s2)) continue;
+				if(m.get(s1).get(s2)) {
+					abstractModel.getStates().remove(failureState);
+					abstractModel.getTransitions().removeIf(t -> t.getFromState().equals(failureState.getName()) || t.getToState().equals(failureState.getName()));
+					StateCluster v = new StateCluster(s1);
+					StateCluster w = new StateCluster(s2);
+					List<State> auxS = new ArrayList<>(abstractModel.getStates());
+					auxS.add(v);
+					auxS.add(w);
+					abstractModel.setStates(auxS);
+					for(State t : failureState.getChildStates()) {
+						if(t.equals(s1) || t.equals(s2)) continue;
+						if(m.get(s1).get(t)) {
+							w.addChildState(t);
+						} else {
+							v.addChildState(t);
+						}
+					}
+					for(State sAux : abstractModel.getStates()) {
+						StateCluster s = (StateCluster) sAux;
+						createTransition(v, abstractModel.getTransitions(), s,
+								kind == Abstraction.May ?
+									v.hasMayTransition(s, model) :
+									v.hasMustTransition(s, model));
+						createTransition(s, abstractModel.getTransitions(), v,
+								kind == Abstraction.May ?
+										s.hasMayTransition(v, model) :
+										s.hasMustTransition(v, model));
+						createTransition(w, abstractModel.getTransitions(), s,
+								kind == Abstraction.May ?
+										w.hasMayTransition(s, model) :
+										w.hasMustTransition(s, model));
+						createTransition(s, abstractModel.getTransitions(), w,
+								kind == Abstraction.May ?
+										s.hasMayTransition(w, model) :
+										s.hasMustTransition(w, model));
+					}
+					abstractModel.setStateMap(null);
+					return;
+				}
+			}
+		}
+	}
+
+	private static void createTransition(State v, List<Transition> transitions, State s, List<List<AgentAction>> agentActions) {
+		if(!agentActions.isEmpty() && transitions.stream().noneMatch(t -> t.getFromState().equals(v.getName()) && t.getToState().equals(s.getName()))) {
+			removeDuplicates(agentActions);
+			Transition transition = new Transition();
+			transition.setFromState(v.getName());
+			transition.setToState(s.getName());
+			transition.setAgentActions(agentActions);
+			transitions.add(transition);
+		}
+	}
+
+	public static void check1(AtlModel abstractModel, AtlModel model, StateCluster failureState, Map<State, Map<State, Boolean>> m) {
+		for(String preName : abstractModel.getTransitions().stream().filter(t -> t.getToState().equals(failureState.getName())).map(Transition::getFromState).collect(Collectors.toList())) {
+			StateCluster pre = (StateCluster) abstractModel.getState(preName);
+			for(State s1 : failureState.getChildStates()) {
+				for(State s2 : failureState.getChildStates()) {
+					//if(s1.equals(s2)) continue;
+					boolean cont = false;
+					for(State t1 : pre.getChildStates()) {
+						for(State t2 : pre.getChildStates()) {
+							//if(t1.equals(t2)) continue;
+							Optional<Transition> tr1 =
+									model.getTransitions().stream().filter(t ->
+											t.getFromState().equals(t1.getName()) &&
+											t.getToState().equals(s1.getName())).findAny();
+							Optional<Transition> tr2 =
+									model.getTransitions().stream().filter(t ->
+											t.getFromState().equals(t2.getName()) &&
+													t.getToState().equals(s2.getName())).findAny();
+							if(tr1.isPresent() && tr2.isPresent()) {
+								for(String a : abstractModel.getGroup().getAgents()) {
+									if(s1.equals(s2) || model.getAgentMap().get(a).getIndistinguishableStates().stream().anyMatch(ind -> ind.contains(s1.getName()) && ind.contains(s2.getName()))) {
+										List<List<AgentAction>> auxL1 = tr1.get().getAgentActions();
+										List<List<AgentAction>> auxL2 = tr2.get().getAgentActions();
+										if(!auxL1.isEmpty() && !auxL2.isEmpty()) {
+											Optional<AgentAction> act1 = auxL1.get(0).stream().filter(act -> act.getAgent().equals(a)).findAny();
+											Optional<AgentAction> act2 = auxL2.get(0).stream().filter(act -> act.getAgent().equals(a)).findAny();
+											if(act1.isPresent() && act2.isPresent() && act1.get().getAction().equals(act2.get().getAction())) {
+												m.get(s1).put(s2, false);
+												cont = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+							if(cont) {
+								break;
+							}
+						}
+						if(cont) {
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean check2(AtlModel abstractModel, StateCluster failureState, Map<State, Map<State, Boolean>> m) {
+		boolean update = false;
+		for(State s1 : failureState.getChildStates()) {
+			for (State s2 : failureState.getChildStates()) {
+				if(s1.equals(s2)) continue;
+				if(m.get(s1).get(s2)) {
+					for (State t : failureState.getChildStates()) {
+						if(!m.get(s1).get(t) && !m.get(s2).get(t)) {
+							m.get(s1).put(s2, false);
+							update = true;
+						}
+					}
+				}
+			}
+		}
+		return update;
 	}
 }

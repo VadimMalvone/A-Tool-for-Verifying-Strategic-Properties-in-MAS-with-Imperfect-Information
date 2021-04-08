@@ -1,10 +1,6 @@
 package fr.univ_evry.ibisc.atl.abstraction.beans;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -85,26 +81,101 @@ public class StateCluster extends State {
 		return CollectionUtils.containsAny(childStates, stateCluster.childStates);
 	}
 
+//	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, AtlModel atlModel) {
+//		List<List<AgentAction>> agentActions = new ArrayList<>();
+//		for (State fromChildState : childStates) {
+//			boolean toStateFound = false;
+//			for (State toChildState : toStateCluster.childStates) {
+//				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+//					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
+//					toStateFound = true;
+//				}
+//			}
+//
+//			if (!toStateFound) {
+//				agentActions.clear();
+//				break;
+//			}
+//		}
+//
+//		return agentActions;
+//	}
+
 	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, AtlModel atlModel) {
-		List<List<AgentAction>> agentActions = new ArrayList<>();
-		for (State fromChildState : childStates) {
-			boolean toStateFound = false;
-			for (State toChildState : toStateCluster.childStates) {
-				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
-					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
-					toStateFound = true;
+		List<String> coalition = atlModel.getGroup().getAgents();
+		Map<String, List<String>> mustActions = new HashMap<>();
+		for(String agent : coalition) {
+			for(String action : atlModel.getAgentMap().get(agent).getActions()) {
+				boolean toStateFound = false;
+				for(State fromChildState : childStates) {
+					toStateFound = false;
+					for(State toChildState : toStateCluster.childStates) {
+						if(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()) == null) {
+							continue;
+						}
+						for(List<AgentAction> agentActionList : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+							for(AgentAction agentAction : agentActionList) {
+								if(agentAction.getAction().equals(action)) {
+									toStateFound = true;
+									break;
+								}
+							}
+							if(toStateFound) {
+								break;
+							}
+						}
+						if(toStateFound) {
+							break;
+						}
+					}
+					if(!toStateFound) {
+						break;
+					}
+				}
+				if(toStateFound) {
+					if(mustActions.containsKey(agent)) {
+						mustActions.get(agent).add(action);
+					} else {
+						List<String> aux = new ArrayList<>();
+						aux.add(action);
+						mustActions.put(agent, aux);
+					}
 				}
 			}
+		}
 
-			if (!toStateFound) {
-				agentActions.clear();
-				break;
+		for(String agent : mustActions.keySet()) {
+			if(mustActions.get(agent).isEmpty()) {
+				return new ArrayList<>();
+			}
+		}
+
+		List<List<AgentAction>> agentActions = new ArrayList<>();
+		for (State fromChildState : childStates) {
+			for (State toChildState : toStateCluster.childStates) {
+				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+					List<List<AgentAction>> aux = new ArrayList<>();
+					for(List<AgentAction> agentActionList : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+						boolean valid = true;
+						for(String agent : mustActions.keySet()) {
+							Optional<AgentAction> optAct = agentActionList.stream().filter(a -> a.getAgent().equals(agent) && mustActions.get(agent).contains(a.getAction())).findAny();
+							if(!optAct.isPresent()) {
+								valid = false;
+								break;
+							}
+						}
+						if(valid) {
+							agentActions.add(agentActionList);
+						}
+					}
+					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
+				}
 			}
 		}
 
 		return agentActions;
 	}
-	
+
 	public List<List<AgentAction>> hasMayTransition(StateCluster toStateCluster, AtlModel atlModel) {
 		List<List<AgentAction>> agentActions = new ArrayList<>();
 		for (State fromChildState : childStates) {
@@ -116,6 +187,10 @@ public class StateCluster extends State {
 		}
 		
 		return agentActions;
+	}
+
+	public List<State> getChildStates() {
+		return childStates;
 	}
 	
 }

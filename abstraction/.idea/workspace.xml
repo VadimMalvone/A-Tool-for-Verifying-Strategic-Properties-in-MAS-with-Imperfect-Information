@@ -1,118 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="" />
-    <ignored path="$PROJECT_DIR$/target/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="must transitions generation updated">
+      <change afterPath="$PROJECT_DIR$/../.idea/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/abstraction.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTL.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLBaseListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLBaseVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/LTLVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/antlr4/LTL.g4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLBaseVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/modelKR.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/model.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="192" column="23" selection-end-line="502" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AgentAction.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="17" column="35" selection-start-line="17" selection-start-column="35" selection-end-line="17" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/MultipleAgentAction.java">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Formula.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="44" selection-start-line="44" selection-end-line="44" />
-              <folding>
-                <element signature="e#732#733#0" expanded="true" />
-                <element signature="e#751#752#0" expanded="true" />
-                <element signature="e#796#797#0" expanded="true" />
-                <element signature="e#821#822#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/State.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="70" column="5" selection-start-line="70" selection-start-column="5" selection-end-line="70" selection-end-column="5" />
-              <folding>
-                <element signature="e#1301#1302#0" expanded="true" />
-                <element signature="e#1326#1327#0" expanded="true" />
-                <element signature="e#1383#1384#0" expanded="true" />
-                <element signature="e#1420#1421#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Transition.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="885">
-              <caret line="79" column="65" selection-start-line="79" selection-start-column="65" selection-end-line="79" selection-end-column="65" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="462" column="103" selection-start-line="462" selection-start-column="103" selection-end-line="462" selection-end-column="103" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1260">
-              <caret line="106" column="1" selection-start-line="106" selection-start-column="1" selection-end-line="106" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="61" column="22" selection-start-line="61" selection-start-column="22" selection-end-line="61" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="915">
-              <caret line="61" column="38" selection-start-line="61" selection-start-column="38" selection-end-line="61" selection-end-column="38" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -149,6 +98,9 @@
       <replace />
     </replaceStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -173,6 +125,10 @@
     <option name="y" value="13" />
     <option name="width" value="640" />
     <option name="height" value="467" />
+  </component>
+  <component name="ProjectId" id="1nbL7vmrZP2CayvsXqMwqx84LIs" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -245,27 +201,34 @@
       <pane id="PackagesPane" />
     </panes>
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1548423605047" />
+    <property name="extract.method.default.visibility" value="private" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="fr.univ_evry.ibisc.atl.abstraction.beans" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Application.App">
+  <component name="RunManager" selected="Spring Boot.App">
     <configuration name="AbstractionUtils" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fr.univ_evry.ibisc.atl.abstraction.AbstractionUtils" />
       <module name="abstraction" />
@@ -292,6 +255,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Parser" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="fr.univ_evry.ibisc.atl.abstraction.TestParser" />
+      <module name="abstraction" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="App" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="abstraction" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="fr.univ_evry.ibisc.atl.abstraction.App" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Parser" />
+      <item itemvalue="Application.AbstractionUtils" />
+      <item itemvalue="Application.App" />
+      <item itemvalue="Spring Boot.App" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.App" />
@@ -299,6 +282,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -309,6 +293,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1546185536650</updated>
+      <workItem from="1611653680802" duration="3005000" />
+      <workItem from="1611657153227" duration="222000" />
+      <workItem from="1611939777940" duration="1423000" />
+      <workItem from="1611941307641" duration="13000" />
+      <workItem from="1612798766539" duration="4383000" />
+      <workItem from="1612859474746" duration="2958000" />
+      <workItem from="1612862812103" duration="10911000" />
+      <workItem from="1613150178447" duration="1669000" />
+      <workItem from="1613749514985" duration="6188000" />
+      <workItem from="1614019522481" duration="21000" />
+      <workItem from="1616076021475" duration="796000" />
+      <workItem from="1616076830958" duration="11885000" />
+      <workItem from="1616142856093" duration="8842000" />
+      <workItem from="1616158167490" duration="14306000" />
+      <workItem from="1616578776158" duration="4096000" />
+      <workItem from="1617006639345" duration="5722000" />
+      <workItem from="1617350123011" duration="57000" />
+      <workItem from="1617380530627" duration="1232000" />
+      <workItem from="1617864750687" duration="4668000" />
     </task>
     <servers />
   </component>
@@ -343,6 +346,47 @@
       <window_info anchor="right" id="Ant Build" order="6" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="7" weight="0.25" />
     </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="must transitions generation updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="must transitions generation updated" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java</url>
+          <line>160</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="setValue">
