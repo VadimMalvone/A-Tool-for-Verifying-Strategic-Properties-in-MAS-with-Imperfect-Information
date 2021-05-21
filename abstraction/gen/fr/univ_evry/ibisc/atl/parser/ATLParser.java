@@ -1,4 +1,4 @@
-// Generated from /media/angelo/WorkData/git/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information/abstraction/src/main/antlr4/LTL.g4 by ANTLR 4.9.1
+// Generated from /media/angelo/WorkData/git/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information/abstraction/src/main/antlr4/ATL.g4 by ANTLR 4.9.1
 package fr.univ_evry.ibisc.atl.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class LTLParser extends Parser {
+public class ATLParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.9.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -19,12 +19,12 @@ public class LTLParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, ATOM=19, WS=20;
+		T__17=18, T__18=19, T__19=20, ATOM=21, WS=22;
 	public static final int
-		RULE_ltlExpr = 0, RULE_atomExpr = 1;
+		RULE_atlExpr = 0, RULE_atomExpr = 1;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"ltlExpr", "atomExpr"
+			"atlExpr", "atomExpr"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -33,14 +33,14 @@ public class LTLParser extends Parser {
 		return new String[] {
 			null, "'!'", "'not'", "'next'", "'X'", "'eventually'", "'F'", "'always'", 
 			"'G'", "'until'", "'U'", "'&&'", "'and'", "'||'", "'or'", "'->'", "'implies'", 
-			"'('", "')'"
+			"'<'", "'>'", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, "ATOM", "WS"
+			null, null, null, null, null, null, null, null, null, "ATOM", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -78,7 +78,7 @@ public class LTLParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "LTL.g4"; }
+	public String getGrammarFileName() { return "ATL.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -89,190 +89,189 @@ public class LTLParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public LTLParser(TokenStream input) {
+	public ATLParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	public static class LtlExprContext extends ParserRuleContext {
-		public LtlExprContext(ParserRuleContext parent, int invokingState) {
+	public static class AtlExprContext extends ParserRuleContext {
+		public AtlExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_ltlExpr; }
+		@Override public int getRuleIndex() { return RULE_atlExpr; }
 	 
-		public LtlExprContext() { }
-		public void copyFrom(LtlExprContext ctx) {
+		public AtlExprContext() { }
+		public void copyFrom(AtlExprContext ctx) {
 			super.copyFrom(ctx);
 		}
-
-		@Override
-		public int hashCode() {
-			return getText().hashCode();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if(!(o instanceof LtlExprContext)) {
-				return false;
-			} else {
-				LtlExprContext ltlExprContext = (LtlExprContext) o;
-				return this.getText().equals(ltlExprContext.getText());
-			}
-		}
 	}
-	public static class EvaluationContext extends LtlExprContext {
+	public static class EvaluationContext extends AtlExprContext {
 		public AtomExprContext child;
 		public AtomExprContext atomExpr() {
 			return getRuleContext(AtomExprContext.class,0);
 		}
-		public EvaluationContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public EvaluationContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitEvaluation(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitEvaluation(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class DisjunctionContext extends LtlExprContext {
-		public LtlExprContext left;
-		public LtlExprContext right;
-		public List<LtlExprContext> ltlExpr() {
-			return getRuleContexts(LtlExprContext.class);
+	public static class DisjunctionContext extends AtlExprContext {
+		public AtlExprContext left;
+		public AtlExprContext right;
+		public List<AtlExprContext> atlExpr() {
+			return getRuleContexts(AtlExprContext.class);
 		}
-		public LtlExprContext ltlExpr(int i) {
-			return getRuleContext(LtlExprContext.class,i);
+		public AtlExprContext atlExpr(int i) {
+			return getRuleContext(AtlExprContext.class,i);
 		}
-		public DisjunctionContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public DisjunctionContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitDisjunction(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitDisjunction(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ImpliesContext extends LtlExprContext {
-		public LtlExprContext left;
-		public LtlExprContext right;
-		public List<LtlExprContext> ltlExpr() {
-			return getRuleContexts(LtlExprContext.class);
+	public static class ImpliesContext extends AtlExprContext {
+		public AtlExprContext left;
+		public AtlExprContext right;
+		public List<AtlExprContext> atlExpr() {
+			return getRuleContexts(AtlExprContext.class);
 		}
-		public LtlExprContext ltlExpr(int i) {
-			return getRuleContext(LtlExprContext.class,i);
+		public AtlExprContext atlExpr(int i) {
+			return getRuleContext(AtlExprContext.class,i);
 		}
-		public ImpliesContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public ImpliesContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitImplies(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitImplies(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NegationContext extends LtlExprContext {
-		public LtlExprContext child;
-		public LtlExprContext ltlExpr() {
-			return getRuleContext(LtlExprContext.class,0);
+	public static class NegationContext extends AtlExprContext {
+		public AtlExprContext child;
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public NegationContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public NegationContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitNegation(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitNegation(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NextContext extends LtlExprContext {
-		public LtlExprContext child;
-		public LtlExprContext ltlExpr() {
-			return getRuleContext(LtlExprContext.class,0);
+	public static class StrategicContext extends AtlExprContext {
+		public Token group;
+		public AtlExprContext child;
+		public TerminalNode ATOM() { return getToken(ATLParser.ATOM, 0); }
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public NextContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public StrategicContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitNext(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitStrategic(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class EventuallyContext extends LtlExprContext {
-		public LtlExprContext child;
-		public LtlExprContext ltlExpr() {
-			return getRuleContext(LtlExprContext.class,0);
+	public static class NextContext extends AtlExprContext {
+		public AtlExprContext child;
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public EventuallyContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public NextContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitEventually(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitNext(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ConjunctionContext extends LtlExprContext {
-		public LtlExprContext left;
-		public LtlExprContext right;
-		public List<LtlExprContext> ltlExpr() {
-			return getRuleContexts(LtlExprContext.class);
+	public static class EventuallyContext extends AtlExprContext {
+		public AtlExprContext child;
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public LtlExprContext ltlExpr(int i) {
-			return getRuleContext(LtlExprContext.class,i);
-		}
-		public ConjunctionContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public EventuallyContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitConjunction(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitEventually(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class GroupingContext extends LtlExprContext {
-		public LtlExprContext ltlExpr() {
-			return getRuleContext(LtlExprContext.class,0);
+	public static class ConjunctionContext extends AtlExprContext {
+		public AtlExprContext left;
+		public AtlExprContext right;
+		public List<AtlExprContext> atlExpr() {
+			return getRuleContexts(AtlExprContext.class);
 		}
-		public GroupingContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public AtlExprContext atlExpr(int i) {
+			return getRuleContext(AtlExprContext.class,i);
+		}
+		public ConjunctionContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitGrouping(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitConjunction(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class AlwaysContext extends LtlExprContext {
-		public LtlExprContext child;
-		public LtlExprContext ltlExpr() {
-			return getRuleContext(LtlExprContext.class,0);
+	public static class GroupingContext extends AtlExprContext {
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public AlwaysContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public GroupingContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitAlways(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitGrouping(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class UntilContext extends LtlExprContext {
-		public LtlExprContext left;
-		public LtlExprContext right;
-		public List<LtlExprContext> ltlExpr() {
-			return getRuleContexts(LtlExprContext.class);
+	public static class AlwaysContext extends AtlExprContext {
+		public AtlExprContext child;
+		public AtlExprContext atlExpr() {
+			return getRuleContext(AtlExprContext.class,0);
 		}
-		public LtlExprContext ltlExpr(int i) {
-			return getRuleContext(LtlExprContext.class,i);
-		}
-		public UntilContext(LtlExprContext ctx) { copyFrom(ctx); }
+		public AlwaysContext(AtlExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitUntil(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitAlways(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class UntilContext extends AtlExprContext {
+		public AtlExprContext left;
+		public AtlExprContext right;
+		public List<AtlExprContext> atlExpr() {
+			return getRuleContexts(AtlExprContext.class);
+		}
+		public AtlExprContext atlExpr(int i) {
+			return getRuleContext(AtlExprContext.class,i);
+		}
+		public UntilContext(AtlExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitUntil(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final LtlExprContext ltlExpr() throws RecognitionException {
-		return ltlExpr(0);
+	public final AtlExprContext atlExpr() throws RecognitionException {
+		return atlExpr(0);
 	}
 
-	private LtlExprContext ltlExpr(int _p) throws RecognitionException {
+	private AtlExprContext atlExpr(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		LtlExprContext _localctx = new LtlExprContext(_ctx, _parentState);
-		LtlExprContext _prevctx = _localctx;
+		AtlExprContext _localctx = new AtlExprContext(_ctx, _parentState);
+		AtlExprContext _prevctx = _localctx;
 		int _startState = 0;
-		enterRecursionRule(_localctx, 0, RULE_ltlExpr, _p);
+		enterRecursionRule(_localctx, 0, RULE_atlExpr, _p);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(18);
+			setState(22);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
@@ -293,7 +292,7 @@ public class LTLParser extends Parser {
 					consume();
 				}
 				setState(6);
-				((NegationContext)_localctx).child = ltlExpr(10);
+				((NegationContext)_localctx).child = atlExpr(11);
 				}
 				break;
 			case T__2:
@@ -313,7 +312,7 @@ public class LTLParser extends Parser {
 					consume();
 				}
 				setState(8);
-				((NextContext)_localctx).child = ltlExpr(9);
+				((NextContext)_localctx).child = atlExpr(10);
 				}
 				break;
 			case T__4:
@@ -333,7 +332,7 @@ public class LTLParser extends Parser {
 					consume();
 				}
 				setState(10);
-				((EventuallyContext)_localctx).child = ltlExpr(8);
+				((EventuallyContext)_localctx).child = atlExpr(9);
 				}
 				break;
 			case T__6:
@@ -353,20 +352,35 @@ public class LTLParser extends Parser {
 					consume();
 				}
 				setState(12);
-				((AlwaysContext)_localctx).child = ltlExpr(7);
+				((AlwaysContext)_localctx).child = atlExpr(8);
 				}
 				break;
 			case T__16:
 				{
-				_localctx = new GroupingContext(_localctx);
+				_localctx = new StrategicContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(13);
 				match(T__16);
 				setState(14);
-				ltlExpr(0);
+				((StrategicContext)_localctx).group = match(ATOM);
 				setState(15);
 				match(T__17);
+				setState(16);
+				((StrategicContext)_localctx).child = atlExpr(3);
+				}
+				break;
+			case T__18:
+				{
+				_localctx = new GroupingContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(17);
+				match(T__18);
+				setState(18);
+				atlExpr(0);
+				setState(19);
+				match(T__19);
 				}
 				break;
 			case ATOM:
@@ -374,7 +388,7 @@ public class LTLParser extends Parser {
 				_localctx = new EvaluationContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(17);
+				setState(21);
 				((EvaluationContext)_localctx).child = atomExpr();
 				}
 				break;
@@ -382,7 +396,7 @@ public class LTLParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(34);
+			setState(38);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -390,17 +404,17 @@ public class LTLParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(32);
+					setState(36);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
-						_localctx = new UntilContext(new LtlExprContext(_parentctx, _parentState));
+						_localctx = new UntilContext(new AtlExprContext(_parentctx, _parentState));
 						((UntilContext)_localctx).left = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_ltlExpr);
-						setState(20);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-						setState(21);
+						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
+						setState(24);
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						setState(25);
 						_la = _input.LA(1);
 						if ( !(_la==T__8 || _la==T__9) ) {
 						_errHandler.recoverInline(this);
@@ -410,18 +424,18 @@ public class LTLParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(22);
-						((UntilContext)_localctx).right = ltlExpr(7);
+						setState(26);
+						((UntilContext)_localctx).right = atlExpr(8);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ConjunctionContext(new LtlExprContext(_parentctx, _parentState));
+						_localctx = new ConjunctionContext(new AtlExprContext(_parentctx, _parentState));
 						((ConjunctionContext)_localctx).left = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_ltlExpr);
-						setState(23);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(24);
+						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
+						setState(27);
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						setState(28);
 						_la = _input.LA(1);
 						if ( !(_la==T__10 || _la==T__11) ) {
 						_errHandler.recoverInline(this);
@@ -431,18 +445,18 @@ public class LTLParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(25);
-						((ConjunctionContext)_localctx).right = ltlExpr(6);
+						setState(29);
+						((ConjunctionContext)_localctx).right = atlExpr(7);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new DisjunctionContext(new LtlExprContext(_parentctx, _parentState));
+						_localctx = new DisjunctionContext(new AtlExprContext(_parentctx, _parentState));
 						((DisjunctionContext)_localctx).left = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_ltlExpr);
-						setState(26);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(27);
+						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
+						setState(30);
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						setState(31);
 						_la = _input.LA(1);
 						if ( !(_la==T__12 || _la==T__13) ) {
 						_errHandler.recoverInline(this);
@@ -452,18 +466,18 @@ public class LTLParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(28);
-						((DisjunctionContext)_localctx).right = ltlExpr(5);
+						setState(32);
+						((DisjunctionContext)_localctx).right = atlExpr(6);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new ImpliesContext(new LtlExprContext(_parentctx, _parentState));
+						_localctx = new ImpliesContext(new AtlExprContext(_parentctx, _parentState));
 						((ImpliesContext)_localctx).left = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_ltlExpr);
-						setState(29);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(30);
+						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
+						setState(33);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(34);
 						_la = _input.LA(1);
 						if ( !(_la==T__14 || _la==T__15) ) {
 						_errHandler.recoverInline(this);
@@ -473,14 +487,14 @@ public class LTLParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(31);
-						((ImpliesContext)_localctx).right = ltlExpr(4);
+						setState(35);
+						((ImpliesContext)_localctx).right = atlExpr(5);
 						}
 						break;
 					}
 					} 
 				}
-				setState(36);
+				setState(40);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -498,29 +512,15 @@ public class LTLParser extends Parser {
 	}
 
 	public static class AtomExprContext extends ParserRuleContext {
-		public TerminalNode ATOM() { return getToken(LTLParser.ATOM, 0); }
+		public TerminalNode ATOM() { return getToken(ATLParser.ATOM, 0); }
 		public AtomExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_atomExpr; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LTLVisitor ) return ((LTLVisitor<? extends T>)visitor).visitAtomExpr(this);
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitAtomExpr(this);
 			else return visitor.visitChildren(this);
-		}
-
-		@Override
-		public int hashCode() {
-			return getText().hashCode();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if(!(o instanceof AtomExprContext)) {
-				return false;
-			} else {
-				return getText().equals(((AtomExprContext) o).getText());
-			}
 		}
 	}
 
@@ -530,7 +530,7 @@ public class LTLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(37);
+			setState(41);
 			match(ATOM);
 			}
 		}
@@ -548,39 +548,40 @@ public class LTLParser extends Parser {
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 0:
-			return ltlExpr_sempred((LtlExprContext)_localctx, predIndex);
+			return atlExpr_sempred((AtlExprContext)_localctx, predIndex);
 		}
 		return true;
 	}
-	private boolean ltlExpr_sempred(LtlExprContext _localctx, int predIndex) {
+	private boolean atlExpr_sempred(AtlExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 6);
+			return precpred(_ctx, 7);
 		case 1:
-			return precpred(_ctx, 5);
+			return precpred(_ctx, 6);
 		case 2:
-			return precpred(_ctx, 4);
+			return precpred(_ctx, 5);
 		case 3:
-			return precpred(_ctx, 3);
+			return precpred(_ctx, 4);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\26*\4\2\t\2\4\3\t"+
-		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2\25\n\2"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2#\n\2\f\2\16\2&\13"+
-		"\2\3\3\3\3\3\3\2\3\2\4\2\4\2\n\3\2\3\4\3\2\5\6\3\2\7\b\3\2\t\n\3\2\13"+
-		"\f\3\2\r\16\3\2\17\20\3\2\21\22\2\60\2\24\3\2\2\2\4\'\3\2\2\2\6\7\b\2"+
-		"\1\2\7\b\t\2\2\2\b\25\5\2\2\f\t\n\t\3\2\2\n\25\5\2\2\13\13\f\t\4\2\2\f"+
-		"\25\5\2\2\n\r\16\t\5\2\2\16\25\5\2\2\t\17\20\7\23\2\2\20\21\5\2\2\2\21"+
-		"\22\7\24\2\2\22\25\3\2\2\2\23\25\5\4\3\2\24\6\3\2\2\2\24\t\3\2\2\2\24"+
-		"\13\3\2\2\2\24\r\3\2\2\2\24\17\3\2\2\2\24\23\3\2\2\2\25$\3\2\2\2\26\27"+
-		"\f\b\2\2\27\30\t\6\2\2\30#\5\2\2\t\31\32\f\7\2\2\32\33\t\7\2\2\33#\5\2"+
-		"\2\b\34\35\f\6\2\2\35\36\t\b\2\2\36#\5\2\2\7\37 \f\5\2\2 !\t\t\2\2!#\5"+
-		"\2\2\6\"\26\3\2\2\2\"\31\3\2\2\2\"\34\3\2\2\2\"\37\3\2\2\2#&\3\2\2\2$"+
-		"\"\3\2\2\2$%\3\2\2\2%\3\3\2\2\2&$\3\2\2\2\'(\7\25\2\2(\5\3\2\2\2\5\24"+
-		"\"$";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30.\4\2\t\2\4\3\t"+
+		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
+		"\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\'"+
+		"\n\2\f\2\16\2*\13\2\3\3\3\3\3\3\2\3\2\4\2\4\2\n\3\2\3\4\3\2\5\6\3\2\7"+
+		"\b\3\2\t\n\3\2\13\f\3\2\r\16\3\2\17\20\3\2\21\22\2\65\2\30\3\2\2\2\4+"+
+		"\3\2\2\2\6\7\b\2\1\2\7\b\t\2\2\2\b\31\5\2\2\r\t\n\t\3\2\2\n\31\5\2\2\f"+
+		"\13\f\t\4\2\2\f\31\5\2\2\13\r\16\t\5\2\2\16\31\5\2\2\n\17\20\7\23\2\2"+
+		"\20\21\7\27\2\2\21\22\7\24\2\2\22\31\5\2\2\5\23\24\7\25\2\2\24\25\5\2"+
+		"\2\2\25\26\7\26\2\2\26\31\3\2\2\2\27\31\5\4\3\2\30\6\3\2\2\2\30\t\3\2"+
+		"\2\2\30\13\3\2\2\2\30\r\3\2\2\2\30\17\3\2\2\2\30\23\3\2\2\2\30\27\3\2"+
+		"\2\2\31(\3\2\2\2\32\33\f\t\2\2\33\34\t\6\2\2\34\'\5\2\2\n\35\36\f\b\2"+
+		"\2\36\37\t\7\2\2\37\'\5\2\2\t !\f\7\2\2!\"\t\b\2\2\"\'\5\2\2\b#$\f\6\2"+
+		"\2$%\t\t\2\2%\'\5\2\2\7&\32\3\2\2\2&\35\3\2\2\2& \3\2\2\2&#\3\2\2\2\'"+
+		"*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\3\3\2\2\2*(\3\2\2\2+,\7\27\2\2,\5\3\2\2"+
+		"\2\5\30&(";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

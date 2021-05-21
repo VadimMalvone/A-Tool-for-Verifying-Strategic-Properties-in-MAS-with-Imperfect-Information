@@ -4,57 +4,71 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="must transitions generation updated">
-      <change afterPath="$PROJECT_DIR$/../.idea/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/abstraction.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTL.interp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTL.tokens" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLBaseListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLBaseVisitor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.interp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLLexer.tokens" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLParser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gen/LTLVisitor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/antlr4/LTL.g4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.interp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.tokens" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLBaseVisitor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.interp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.tokens" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLParser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLVisitor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/modelKR.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features.">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLBaseListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLBaseVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLLexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/ATLVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATL.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLLexer.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATL.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLBaseVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLLexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLLexer.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gen/package fr/univ_evry/ibisc/atl/parser;/ATLVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLBaseVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.interp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.tokens" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/antlr4/LTL.g4" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/antlr4/ATL.g4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Formula.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/Formula1.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.interp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTL.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/gen/ATL.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLBaseVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.interp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLLexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLLexer.tokens" beforeDir="false" afterPath="$PROJECT_DIR$/gen/ATLLexer.tokens" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/LTLVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/gen/fr/univ_evry/ibisc/atl/parser/ATLVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/model.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/model.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/modelKR.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/modelKR.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Formula.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/model.json" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -120,6 +134,9 @@
         <option value="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" />
       </list>
     </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="13" />
@@ -216,9 +233,9 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1548423605047" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -258,6 +275,17 @@
     <configuration name="Parser" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="fr.univ_evry.ibisc.atl.abstraction.TestParser" />
       <module name="abstraction" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -311,8 +339,20 @@
       <workItem from="1617006639345" duration="5722000" />
       <workItem from="1617350123011" duration="57000" />
       <workItem from="1617380530627" duration="1232000" />
-      <workItem from="1617864750687" duration="4668000" />
+      <workItem from="1617864750687" duration="14639000" />
+      <workItem from="1617970264252" duration="320000" />
+      <workItem from="1617970782350" duration="4000" />
+      <workItem from="1619785727575" duration="3805000" />
+      <workItem from="1621581283465" duration="8953000" />
     </task>
+    <task id="LOCAL-00001" summary="must transitions generation updated">
+      <created>1617869568765</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1617869568766</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -365,20 +405,31 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="must transitions generation updated" />
-    <option name="LAST_COMMIT_MESSAGE" value="must transitions generation updated" />
+    <MESSAGE value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java</url>
-          <line>160</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java</url>
+          <line>43</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ThreeValuedAutomaton.java</url>
-          <line>61</line>
-          <option name="timeStamp" value="16" />
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java</url>
+          <line>37</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java</url>
+          <line>285</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="47" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -386,7 +437,14 @@
       <configuration name="SpringBootApplicationConfigurationType">
         <watch expression="atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())" language="JAVA" />
       </configuration>
+      <configuration name="Application">
+        <watch expression="ctx.getChild(1)" language="JAVA" />
+      </configuration>
     </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="setValue">

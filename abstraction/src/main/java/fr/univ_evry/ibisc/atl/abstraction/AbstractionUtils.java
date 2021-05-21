@@ -11,19 +11,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import fr.univ_evry.ibisc.atl.abstraction.beans.*;
+import fr.univ_evry.ibisc.atl.parser.ATL;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
-
-import fr.univ_evry.ibisc.atl.abstraction.beans.AgentAction;
-import fr.univ_evry.ibisc.atl.abstraction.beans.Agent;
-import fr.univ_evry.ibisc.atl.abstraction.beans.AtlModel;
-import fr.univ_evry.ibisc.atl.abstraction.beans.State;
-import fr.univ_evry.ibisc.atl.abstraction.beans.StateCluster;
-import fr.univ_evry.ibisc.atl.abstraction.beans.Transition;
 
 public class AbstractionUtils {
 	
@@ -185,11 +180,13 @@ public class AbstractionUtils {
 	}
 	
 	private static void validateGroup(AtlModel atlModel) throws Exception {
-		List<String> groupAgents = atlModel.getGroup().getAgents();
-		Collection<String> agentNotDefinedList = CollectionUtils.subtract(groupAgents, atlModel.getAgentMap().keySet());
-		if (CollectionUtils.isNotEmpty(agentNotDefinedList)) {
-			throw new Exception (MessageFormat.format("Some agents in the group have not been defined : {0}", 
-					agentNotDefinedList, System.lineSeparator(), atlModel));
+		for(Group g : atlModel.getGroups()) {
+			List<String> groupAgents = g.getAgents();
+			Collection<String> agentNotDefinedList = CollectionUtils.subtract(groupAgents, atlModel.getAgentMap().keySet());
+			if (CollectionUtils.isNotEmpty(agentNotDefinedList)) {
+				throw new Exception(MessageFormat.format("Some agents in the group have not been defined : {0}",
+						agentNotDefinedList, System.lineSeparator(), atlModel));
+			}
 		}
 	}
 	
@@ -357,7 +354,7 @@ public class AbstractionUtils {
 		}
 
 		stringBuilder.append("Evaluation").append(System.lineSeparator());
-		for (String term: atlModel.getFormula().getTerms()) {
+		for (String term: atlModel.getATL().getTerms()) {
 			stringBuilder.append("\t").append(term).append(" if (Environment.").append(term).append(" = true);").append(System.lineSeparator());
 		}
 		stringBuilder.append("\t").append("end Evaluation").append(System.lineSeparator());
@@ -381,7 +378,7 @@ public class AbstractionUtils {
 				for (int j = 0; j < state.getFalseLabels().size(); j++) {
 					String label = state.getFalseLabels().get(j);
 					stringBuilder.append("\t").append("\t").append("Environment.").append(label).append(" = false");
-					if (j<state.getLabels().size()-1)
+					if (j<state.getFalseLabels().size()-1)
 						stringBuilder.append(" and ").append(System.lineSeparator());
 				}
 			}
@@ -404,14 +401,17 @@ public class AbstractionUtils {
 		stringBuilder.append(";").append(System.lineSeparator()).append("\t").append("end InitStates").append(System.lineSeparator());
 
 		stringBuilder.append("Groups").append(System.lineSeparator());
-		stringBuilder.append("\t").append(atlModel.getGroup().getName()).append("=").append("{").append(String.join(",", atlModel.getGroup().getAgents())).append("};").append(System.lineSeparator());
+		for(Group g : atlModel.getGroups()) {
+			stringBuilder.append("\t").append(g.getName()).append("=").append("{").append(String.join(",", g.getAgents())).append("};").append(System.lineSeparator());
+		}
 		stringBuilder.append("end Groups").append(System.lineSeparator());
 
 		stringBuilder.append("Formulae").append(System.lineSeparator());
 		stringBuilder.append("\t");
 //		if (isMayModel)
 //			stringBuilder.append("!(");
-		stringBuilder.append("<").append(atlModel.getGroup().getName()).append(">").append(atlModel.getFormula().getSubformula());
+		stringBuilder.append(atlModel.getFormula());
+//		stringBuilder.append("<").append(atlModel.getGroup().getName()).append(">").append(atlModel.getFormula().getSubformula());
 //		if (isMayModel)
 //			stringBuilder.append(")");
 		stringBuilder.append(";").append(System.lineSeparator());
@@ -547,7 +547,16 @@ public class AbstractionUtils {
 											t.getFromState().equals(t2.getName()) &&
 													t.getToState().equals(s2.getName())).findAny();
 							if(tr1.isPresent() && tr2.isPresent()) {
-								for(String a : abstractModel.getGroup().getAgents()) {
+								// to be checked (here, we are assuming a simple ATL property with only one strategic operator. What to do with formulae like: <A>F<B>Xp?)
+								Group group = new Group();
+								for(Group g : abstractModel.getGroups()) {
+									if(g.getName().equals(((ATL.Strategic)(abstractModel.getATL())).getGroup())) {
+										group = g;
+										break;
+									}
+								}
+								//
+								for(String a : group.getAgents()) {
 									if(s1.equals(s2) || model.getAgentMap().get(a).getIndistinguishableStates().stream().anyMatch(ind -> ind.contains(s1.getName()) && ind.contains(s2.getName()))) {
 										List<List<AgentAction>> auxL1 = tr1.get().getAgentActions();
 										List<List<AgentAction>> auxL2 = tr2.get().getAgentActions();

@@ -1,18 +1,20 @@
 package fr.univ_evry.ibisc.atl.abstraction.beans;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import fr.univ_evry.ibisc.atl.parser.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.collections4.MapUtils;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiKeyMap;
 
-public class AtlModel extends JsonObject {
+public class AtlModel extends JsonObject implements Cloneable {
 
 	@SerializedName("states")
 	@Expose
@@ -23,12 +25,13 @@ public class AtlModel extends JsonObject {
 	@SerializedName("transitions")
 	@Expose
 	private List<Transition> transitions = new ArrayList<>();
-	@SerializedName("group")
+	@SerializedName("groups")
 	@Expose
-	private Group group;
+	private List<Group> groups = new ArrayList<>();
 	@SerializedName("formula")
 	@Expose
-	private Formula formula;
+	private String formula;
+	private ATL atl;
 	
 	private transient Map<String, State> stateMap;
 	
@@ -62,20 +65,31 @@ public class AtlModel extends JsonObject {
 		this.transitions = transitions;
 	}
 
-	public Group getGroup() {
-		return group;
+	public List<Group> getGroups() {
+		return groups;
 	}
 
-	public void setGroup(Group group) {
-		this.group = group;
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
 	}
 
-	public Formula getFormula() {
-		return formula;
+	public String getFormula() {return formula; }
+	public void setFormula(String formula) { this.formula = formula; }
+
+	public ATL getATL() {
+		if(atl == null) {
+			CharStream codePointCharStream = CharStreams.fromString(formula);
+			ATLLexer lexer = new ATLLexer(codePointCharStream);
+			ATLParser parser = new ATLParser(new CommonTokenStream(lexer));
+			ParseTree tree = parser.atlExpr();
+			ClosureLTLVisitor visitor = new ClosureLTLVisitor();
+			atl = visitor.visit(tree);
+		}
+		return atl;
 	}
 
-	public void setFormula(Formula formula) {
-		this.formula = formula;
+	public void setATL(ATL formula) {
+		this.atl = formula;
 	}
 	
 	public Map<String, State> getStateMap() {
@@ -133,6 +147,152 @@ public class AtlModel extends JsonObject {
 		
 		return transitionMap;
 	}
-	
+
+	public static AtlModel product(AtlModel model, ThreeValuedAutomaton automaton) {
+		AtlModel result = model.clone();
+
+		result.setAgents(model.getAgents());
+
+		List<State> states = new ArrayList<>();
+
+		for(String s : model.getStates().stream().map(State::getName).collect(Collectors.toList())) {
+			for(String q : automaton.getStates()) {
+				State state = new State();
+				state.setName(s + "_x_" + q);
+				state.setLabels(new ArrayList<>());
+				state.setFalseLabels(new ArrayList<>());
+				for(ATL ATL : automaton.getStateLTLMap().get(q)) {
+					if(ATL instanceof ATL.Atom) {
+						state.getLabels().add(ATL.toString());
+					} else if(ATL instanceof ATL.Not) {
+						state.getFalseLabels().add(((ATL.Not) ATL).getSubFormula().toString());
+					}
+				}
+				states.add(state);
+			}
+		}
+		result.setStates(states);
+
+		for(State initialState : model.getStates().stream().filter(State::isInitial).collect(Collectors.toList())) {
+			Set<ATL> event = new HashSet<>();
+			initialState.getLabels().forEach(l -> event.add(new ATL.Atom(l)));
+			initialState.getFalseLabels().forEach(l -> event.add(new ATL.Not(new ATL.Atom(l))));
+			for (String q0 : automaton.getInitialStates()) {
+				for (String next : automaton.next(q0, event)) {
+					result.getState(initialState.getName() + "_x_" + next).setInitial(true);
+//					State state = new State();
+//					state.setName(initialState.getName() + "_x_" + next);
+//					state.setLabels(new ArrayList<>());
+//					state.setFalseLabels(new ArrayList<>());
+//					for(LTL ltl : automaton.getStateLTLMap().get(next)) {
+//						if(ltl instanceof LTL.Atom) {
+//							state.getLabels().add(ltl.toString());
+//						} else if(ltl instanceof LTL.Not) {
+//							state.getFalseLabels().add(((LTL.Not) ltl).getSubFormula().toString());
+//						}
+//					}
+//					states.add(state);
+				}
+			}
+		}
+		result.setTransitions(new ArrayList<>());
+		for (Transition tr : model.getTransitions()) {
+			Set<ATL> e = new HashSet<>();
+			State toState = model.getState(tr.getToState());
+			toState.getLabels().forEach(l -> e.add(new ATL.Atom(l)));
+			toState.getFalseLabels().forEach(l -> e.add(new ATL.Not(new ATL.Atom(l))));
+			for (String q : automaton.getStates()) {
+				Set<String> qs = automaton.next(q, e);
+				for (String qs1 : qs) {
+					Transition newTr = new Transition();
+					newTr.setFromState(tr.getFromState() + "_x_" + q);
+					newTr.setToState(tr.getToState() + "_x_" + qs1);
+					newTr.setAgentActions(tr.getAgentActions());
+					newTr.setDefaultTransition(tr.isDefaultTransition());
+					newTr.setMultipleAgentActions(tr.getMultipleAgentActions());
+					result.getTransitions().add(newTr);
+				}
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public AtlModel clone() {
+		AtlModel clone;
+		try {
+			clone = (AtlModel) super.clone();
+		}
+		catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Superclass messed up", ex);
+		}
+
+		List<State> statesAuxList = new ArrayList<>();
+		for (State state : states) {
+			State newState = new State(state.getName(), state.isInitial());
+			newState.setLabels(new ArrayList<>(state.getLabels()));
+			newState.setFalseLabels(new ArrayList<>(state.getFalseLabels()));
+			statesAuxList.add(newState);
+		}
+		clone.states = statesAuxList;
+		List<Agent> agentsAuxList = new ArrayList<>();
+		for(Agent agent : agents) {
+			Agent newAgent = new Agent();
+			newAgent.setName(agent.getName());
+			newAgent.setActions(new ArrayList<>(agent.getActions()));
+			newAgent.setIndistinguishableStates(new ArrayList<>());
+			for(List<String> indS : agent.getIndistinguishableStates()) {
+				newAgent.getIndistinguishableStates().add(new ArrayList<>(indS));
+			}
+			agentsAuxList.add(newAgent);
+		}
+		clone.agents = agentsAuxList;
+		List<Transition> transitionsAuxList = new ArrayList<>();
+		for(Transition tr : transitions) {
+			Transition newTransition = new Transition();
+			newTransition.setFromState(tr.getFromState());
+			newTransition.setToState(tr.getToState());
+			newTransition.setAgentActions(new ArrayList<>());
+			for(List<AgentAction> aal : tr.getAgentActions()) {
+				List<AgentAction> aalAux = new ArrayList<>();
+				for(AgentAction aa : aal) {
+					AgentAction newAa = new AgentAction();
+					newAa.setAgent(aa.getAgent());
+					newAa.setAction(aa.getAction());
+					aalAux.add(newAa);
+				}
+				newTransition.getAgentActions().add(aalAux);
+			}
+			List<MultipleAgentAction> maalAux = new ArrayList<>();
+			for(MultipleAgentAction maa : tr.getMultipleAgentActions()) {
+				MultipleAgentAction newMaa = new MultipleAgentAction();
+				newMaa.setAgent(maa.getAgent());
+				newMaa.setActions(new ArrayList<>(maa.getActions()));
+				maalAux.add(newMaa);
+			}
+			newTransition.setMultipleAgentActions(maalAux);
+			newTransition.setDefaultTransition(tr.isDefaultTransition());
+			transitionsAuxList.add(newTransition);
+		}
+		clone.transitions = transitionsAuxList;
+		clone.groups = new ArrayList<>();
+		for(Group g : groups) {
+			Group ng = new Group();
+			ng.setName(g.getName());
+			ng.setAgents(new ArrayList<>(g.getAgents()));
+			clone.groups.add(ng);
+		}
+		clone.formula = formula;
+		clone.atl = getATL().clone();
+		clone.agentMap = null;
+		clone.stateMap = null;
+		return clone;
+	}
+
+	public List<List<AgentAction>> getPath() {
+		
+
+		return null;
+	}
 
 }

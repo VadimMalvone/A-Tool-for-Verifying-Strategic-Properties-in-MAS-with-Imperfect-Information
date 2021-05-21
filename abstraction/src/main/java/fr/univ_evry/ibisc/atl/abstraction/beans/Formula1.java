@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Formula extends JsonObject {
+public class Formula1 extends JsonObject implements Cloneable {
 
 	@SerializedName("group")
 	@Expose
@@ -41,4 +41,14 @@ public class Formula extends JsonObject {
 	public void setTerms(List<String> terms) {
 		this.terms = terms;
 	}
+
+	@Override
+	public Formula1 clone() {
+		Formula1 formula = new Formula1();
+		formula.name = name;
+		formula.terms = new ArrayList<>(this.terms);
+		formula.subformula = subformula;
+		return formula;
+	}
+
 }

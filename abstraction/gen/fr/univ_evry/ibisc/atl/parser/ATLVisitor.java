@@ -1,89 +1,96 @@
-// Generated from /media/angelo/WorkData/git/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information/abstraction/src/main/antlr4/LTL.g4 by ANTLR 4.9.1
+// Generated from /media/angelo/WorkData/git/A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information/abstraction/src/main/antlr4/ATL.g4 by ANTLR 4.9.1
 package fr.univ_evry.ibisc.atl.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced
- * by {@link LTLParser}.
+ * by {@link ATLParser}.
  *
  * @param <T> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
-public interface LTLVisitor<T> extends ParseTreeVisitor<T> {
+public interface ATLVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code Evaluation}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEvaluation(LTLParser.EvaluationContext ctx);
+	T visitEvaluation(ATLParser.EvaluationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Disjunction}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDisjunction(LTLParser.DisjunctionContext ctx);
+	T visitDisjunction(ATLParser.DisjunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Implies}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImplies(LTLParser.ImpliesContext ctx);
+	T visitImplies(ATLParser.ImpliesContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Negation}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNegation(LTLParser.NegationContext ctx);
+	T visitNegation(ATLParser.NegationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Strategic}
+	 * labeled alternative in {@link ATLParser#atlExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStrategic(ATLParser.StrategicContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Next}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNext(LTLParser.NextContext ctx);
+	T visitNext(ATLParser.NextContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Eventually}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEventually(LTLParser.EventuallyContext ctx);
+	T visitEventually(ATLParser.EventuallyContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Conjunction}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConjunction(LTLParser.ConjunctionContext ctx);
+	T visitConjunction(ATLParser.ConjunctionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Grouping}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGrouping(LTLParser.GroupingContext ctx);
+	T visitGrouping(ATLParser.GroupingContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Always}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAlways(LTLParser.AlwaysContext ctx);
+	T visitAlways(ATLParser.AlwaysContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Until}
-	 * labeled alternative in {@link LTLParser#ltlExpr}.
+	 * labeled alternative in {@link ATLParser#atlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUntil(LTLParser.UntilContext ctx);
+	T visitUntil(ATLParser.UntilContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LTLParser#atomExpr}.
+	 * Visit a parse tree produced by {@link ATLParser#atomExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAtomExpr(LTLParser.AtomExprContext ctx);
+	T visitAtomExpr(ATLParser.AtomExprContext ctx);
 }

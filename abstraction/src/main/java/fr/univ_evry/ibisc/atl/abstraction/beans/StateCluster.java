@@ -3,6 +3,7 @@ package fr.univ_evry.ibisc.atl.abstraction.beans;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.univ_evry.ibisc.atl.parser.ATL;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -102,7 +103,16 @@ public class StateCluster extends State {
 //	}
 
 	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, AtlModel atlModel) {
-		List<String> coalition = atlModel.getGroup().getAgents();
+		// to be checked (here, we are assuming a simple ATL property with only one strategic operator. What to do with formulae like: <A>F<B>Xp?)
+		Group group = new Group();
+		for(Group g : atlModel.getGroups()) {
+			if(g.getName().equals(((ATL.Strategic)(atlModel.getATL())).getGroup())) {
+				group = g;
+				break;
+			}
+		}
+		//
+		List<String> coalition = group.getAgents();
 		Map<String, List<String>> mustActions = new HashMap<>();
 		for(String agent : coalition) {
 			for(String action : atlModel.getAgentMap().get(agent).getActions()) {

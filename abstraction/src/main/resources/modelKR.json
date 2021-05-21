@@ -495,16 +495,14 @@
          ]
       }
    ],
-   "group": {
-      "name": "g1",
-      "agents": [
-         "Train1",
-         "Controller"
-      ]
-   },
-   "formula": {
-      "group": "g1",
-      "terms" : ["l1", "b", "g"],
-      "sub-formula": "F(l1 and ((!b) U g))"
-   }
+   "groups": [
+      {
+         "name": "g1",
+         "agents": [
+            "Train1",
+            "Controller"
+         ]
+      }
+   ],
+   "formula": "<g1>F(l1 and <g1>((!b) U g))"
 }

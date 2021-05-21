@@ -1,0 +1,24 @@
+grammar ATL;
+
+atlExpr : ('!' | 'not') child=atlExpr                                  # Negation
+     //temporal operators
+     | ('next' | 'X') child=atlExpr                                    # Next
+     | ('eventually' | 'F') child=atlExpr                              # Eventually
+     | ('always' | 'G') child=atlExpr                                  # Always
+     | left=atlExpr ('until' | 'U') right=atlExpr                      # Until
+     // boolean operators
+     | left=atlExpr ('&&' | 'and') right=atlExpr                       # Conjunction
+     | left=atlExpr ('||' | 'or') right=atlExpr                        # Disjunction
+     | left=atlExpr ('->' | 'implies') right=atlExpr                   # Implies
+     // strategic operators
+     | '<' group=ATOM '>' child=atlExpr                                # Strategic
+     | '(' atlExpr ')'                                                 # Grouping
+     | child=atomExpr                                                  # Evaluation
+     ;
+
+atomExpr : ATOM;
+
+ATOM : [_a-zA-Z][_a-zA-Z0-9]*;
+
+WS        : [ \t\r\n\u000C]+ -> skip;
+

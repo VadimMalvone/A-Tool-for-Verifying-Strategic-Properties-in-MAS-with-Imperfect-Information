@@ -488,16 +488,14 @@
          ]
       }
    ],
-   "group": {
-      "name": "g1",
-      "agents": [
-         "Train1",
-         "Controller"
-      ]
-   },
-   "formula": {
-      "group": "g1",
-      "terms" : ["s4"],
-      "sub-formula": "F(s4)"
-   }
+   "formula": "<g1>(F(s4))",
+   "groups": [
+      {
+         "name": "g1",
+         "agents": [
+            "Train1",
+            "Controller"
+         ]
+      }
+   ]
 }
