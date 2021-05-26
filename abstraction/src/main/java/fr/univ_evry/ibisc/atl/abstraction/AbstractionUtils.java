@@ -36,7 +36,7 @@ public class AbstractionUtils {
 				for (StateCluster stateCluster : stateClusters) {
 					List<State> indistinguishableStateList = 
 											indistinguishableStateNameList.parallelStream()
-													.map(stateName->atlModel.getState(stateName)).collect(Collectors.toList());
+													.map(atlModel::getState).collect(Collectors.toList());
 					if (stateCluster.containsAnyChildState(indistinguishableStateList)) {
 						for (State state : indistinguishableStateList) {
 							if (!stateCluster.containsChildState(state)) {
@@ -128,6 +128,23 @@ public class AbstractionUtils {
 	public static void validateAtlModel(AtlModel atlModel) throws Exception {
 		validateTransitions(atlModel);
 		validateGroup(atlModel);
+		Set<String> labels = new HashSet<>();
+		for(State s : atlModel.getStates()) {
+			labels.addAll(s.getLabels());
+			labels.addAll(s.getFalseLabels());
+		}
+		for(State s : atlModel.getStates()) {
+			List<String> sLabels = new ArrayList<>();
+			for(String l : labels) {
+				if(s.getLabels().contains(l)) {
+					sLabels.add(l + "_tt");
+				} else {
+					sLabels.add(l + "_ff");
+				}
+			}
+			s.setLabels(sLabels);
+			s.setFalseLabels(sLabels.stream().map(l -> l.endsWith("_tt") ? l.replace("_tt", "_ff") : l.replace("_ff", "_tt")).collect(Collectors.toList()));
+		}
 	}
 		
 	private static void validateTransitions(AtlModel atlModel) throws Exception {
@@ -239,18 +256,24 @@ public class AbstractionUtils {
 		}
 	}
 
-
 	public static String generateMCMASProgram(AtlModel atlModel, boolean isMayModel) {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(System.lineSeparator()).append("Agent Environment").append(System.lineSeparator());
 		stringBuilder.append("\t").append("Vars :").append(System.lineSeparator());
+		Set<String> alreadyAddedLabels = new HashSet<>();
 		for (State state: atlModel.getStates()) {
 			stringBuilder.append("\t").append("\t").append(state.getName()).append(" : boolean;").append(System.lineSeparator());
 			for (String label: state.getLabels()) {
-				stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
+				if(!alreadyAddedLabels.contains(label)) {
+					stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
+					alreadyAddedLabels.add(label);
+				}
 			}
 			for (String label: state.getFalseLabels()) {
-				stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
+				if(!alreadyAddedLabels.contains(label)) {
+					stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
+					alreadyAddedLabels.add(label);
+				}
 			}
 		}
 		stringBuilder.append("\t").append("end Vars").append(System.lineSeparator());
@@ -266,7 +289,9 @@ public class AbstractionUtils {
 				stringBuilder.append(fromState.getName()).append(" = false ");
 				if (CollectionUtils.isNotEmpty(fromState.getLabels())) {
 					for (String label: fromState.getLabels()) {
-						stringBuilder.append("and ").append(label).append(" = false ");
+						if(!toState.getLabels().contains(label)) {
+							stringBuilder.append("and ").append(label).append(" = false ");
+						}
 					}
 				}
 				stringBuilder.append("and ");
@@ -291,7 +316,9 @@ public class AbstractionUtils {
 				stringBuilder.append("and ").append(toState.getName()).append(" = false ");
 				if (CollectionUtils.isNotEmpty(toState.getLabels())) {
 					for (String label : toState.getLabels()) {
-						stringBuilder.append("and ").append(label).append(" = false ");
+						if(!fromState.getLabels().contains(label)) {
+							stringBuilder.append("and ").append(label).append(" = false ");
+						}
 					}
 				}
 			}
@@ -315,40 +342,219 @@ public class AbstractionUtils {
 			if (transition.getAgentActions().size()>1)
 				stringBuilder.append(")");
 
+			if (transition.getMultipleAgentActions().size()>1)
+				stringBuilder.append("(");
+			for (int i = 0; i < transition.getMultipleAgentActions().size(); i++) {
+				MultipleAgentAction multiAction = transition.getMultipleAgentActions().get(i);
+				stringBuilder.append("(");
+				for (int j = 0; j < multiAction.getActions().size(); j++) {
+					String agentAction = multiAction.getActions().get(j);
+					stringBuilder.append(multiAction.getAgent()).append(".Action").append(" = ").append(agentAction);
+					if (j<multiAction.getActions().size()-1)
+						stringBuilder.append(" or ");
+				}
+				stringBuilder.append(")");
+				if (i<transition.getMultipleAgentActions().size()-1)
+					stringBuilder.append(" or ").append(System.lineSeparator()).append("\t\t\t\t\t");
+			}
+			if (transition.getMultipleAgentActions().size()>1)
+				stringBuilder.append(")");
+
 			stringBuilder.append(";").append(System.lineSeparator());
 		}
 		stringBuilder.append("\t").append("end Evolution").append(System.lineSeparator());
 		stringBuilder.append("end Agent").append(System.lineSeparator());
 
-		for (Agent agent:atlModel.getAgents()) {
+		for (Agent agent : atlModel.getAgents()) {
 			stringBuilder.append("Agent ").append(agent.getName()).append(System.lineSeparator());
+			alreadyAddedLabels.clear();
 			List<String> lobsvars = new ArrayList<>();
 			for (State state : atlModel.getStates()) {
-				lobsvars.add(state.getName());
-				for (String label : state.getLabels())
-					lobsvars.add(label);
+				boolean consider = true;
+				for(List<String> lIndS : agent.getIndistinguishableStates()){
+					if(lIndS.contains(state.getName())) {
+						consider = false;
+						break;
+					}
+				}
+				if(consider) {
+					lobsvars.add(state.getName());
+				}
+				for (String label : state.getLabels()) {
+					if(!alreadyAddedLabels.contains(label)) {
+						lobsvars.add(label);
+						alreadyAddedLabels.add(label);
+					}
+				}
 			}
 			stringBuilder.append("\t").append("Lobsvars = {").append(String.join(", ", lobsvars)).append("};").append(System.lineSeparator());
 			stringBuilder.append("\t").append("Vars : ").append(System.lineSeparator());
-			stringBuilder.append("\t").append("\t").append("play : boolean;").append(System.lineSeparator());
-			stringBuilder.append("\t").append("end Vars").append(System.lineSeparator());
+			if(CollectionUtils.isNotEmpty(agent.getIndistinguishableStates())) {
+//				boolean first = true;
+				for (List<String> lIndS : agent.getIndistinguishableStates()) {
+//					if (first) {
+//						first = false;
+//					} else {
+//						stringBuilder.append(",").append(System.lineSeparator());
+//					}
+					stringBuilder.append("\t").append("\t").append("imp_").append(String.join("_", lIndS)).append(": boolean;");
+				}
+			}
+			stringBuilder.append(System.lineSeparator()).append("\t").append("\t").append("play : boolean;");
+
+			stringBuilder.append(System.lineSeparator()).append("\t").append("end Vars").append(System.lineSeparator());
 			stringBuilder.append("\t").append("Actions = {").append(String.join(",", agent.getActions())).append("};");
 			Map<String, List<String>> availableActionMap = getAvailableActions(atlModel, agent);
 			stringBuilder.append(System.lineSeparator()).append("\t").append("Protocol : ").append(System.lineSeparator());
+//            stringBuilder.append("Other : {").append(String.join(",", agent.getActions())).append("};");
 			for (Entry<String, List<String>> availableActionsEntry: availableActionMap.entrySet()) {
-				stringBuilder.append("\t").append("\t").append("Environment.")
-								.append(availableActionsEntry.getKey()).append(" = true");
-				State state = atlModel.getState(availableActionsEntry.getKey());
-				if (CollectionUtils.isNotEmpty(state.getLabels())) {
-					for (String label : state.getLabels())
-						stringBuilder.append(" and ").append("Environment.").append(label).append(" = true");
+				stringBuilder.append("\t").append("\t");
+				if(!availableActionsEntry.getKey().startsWith("imp_")) {
+					stringBuilder.append("Environment.");
 				}
-				stringBuilder.append(" : {")
-								.append(String.join(",", availableActionsEntry.getValue())).append("};").append(System.lineSeparator());
+				stringBuilder.append(availableActionsEntry.getKey()).append(" = true");
+				if(!availableActionsEntry.getKey().startsWith("imp_")) {
+					State state = atlModel.getState(availableActionsEntry.getKey());
+					if (CollectionUtils.isNotEmpty(state.getLabels())) {
+						for (String label : state.getLabels())
+							stringBuilder.append(" and ").append("Environment.").append(label).append(" = true");
+					}
+					stringBuilder.append(" : {")
+							.append(String.join(",", availableActionsEntry.getValue())).append("};").append(System.lineSeparator());
+				} else {
+					for(String s : availableActionsEntry.getKey().substring(4).split("_")) {
+						State state = atlModel.getState(s);
+						if (CollectionUtils.isNotEmpty(state.getLabels())) {
+							for (String label : state.getLabels())
+								stringBuilder.append(" and ").append("Environment.").append(label).append(" = true");
+						}
+					}
+					stringBuilder.append(" : {")
+							.append(String.join(",", availableActionsEntry.getValue())).append("};").append(System.lineSeparator());
+				}
 			}
 			stringBuilder.append("\t").append("end Protocol").append(System.lineSeparator());
 			stringBuilder.append("\t").append("Evolution : ").append(System.lineSeparator());
 			stringBuilder.append("\t").append("\t").append("play = true if play = true;").append(System.lineSeparator());
+			if(CollectionUtils.isNotEmpty(agent.getIndistinguishableStates())) {
+				for (Transition transition : atlModel.getTransitions()) {
+					State toState = atlModel.getState(transition.getToState());
+					State fromState = atlModel.getState(transition.getFromState());
+					State toStateAux = toState, fromStateAux = fromState;
+					for (List<String> lIndS : agent.getIndistinguishableStates()) {
+						if (lIndS.contains(toState.getName())) {
+							toState = new State();
+							toState.setName("imp_" + String.join("_", lIndS));
+							toState.setInitial(atlModel.getStates().stream().anyMatch(s -> lIndS.contains(s.getName()) && s.isInitial()));
+							toState.setLabels(new ArrayList<>());
+							for (List<String> labels : atlModel.getStates().stream().filter(s -> lIndS.contains(s.getName())).map(State::getLabels).collect(Collectors.toSet())) {
+								toState.getLabels().addAll(labels);
+							}
+						}
+						if (lIndS.contains(fromState.getName())) {
+							fromState = new State();
+							fromState.setName("imp_" + String.join("_", lIndS));
+							fromState.setInitial(atlModel.getStates().stream().anyMatch(s -> lIndS.contains(s.getName()) && s.isInitial()));
+							fromState.setLabels(new ArrayList<>());
+							for (List<String> labels : atlModel.getStates().stream().filter(s -> lIndS.contains(s.getName())).map(State::getLabels).collect(Collectors.toSet())) {
+								fromState.getLabels().addAll(labels);
+							}
+						}
+					}
+					if (toState == toStateAux) { // && fromState == fromStateAux) {
+						continue;
+					}
+//                if(toState == toStateAux) {
+//                toState.setName("Environment." + toState.getName());
+//                }
+					if (fromState == fromStateAux) {
+						fromState.setName("Environment." + fromState.getName());
+					}
+					stringBuilder.append("\t").append("\t");
+//                if (!fromState.equals(toState)) {
+//                    stringBuilder.append("(").append(fromState.getName()).append(" = false ").append(")");
+//                    if (CollectionUtils.isNotEmpty(fromState.getLabels())) {
+//                        for (String label: fromState.getLabels()) {
+//                            if(!toState.getLabels().contains(label)) {
+//                                stringBuilder.append("and ").append("(").append(label).append(" = false ").append(")");
+//                            }
+//                        }
+//                    }
+//                    stringBuilder.append("and ");
+//                }
+
+					stringBuilder.append("(").append(toState.getName()).append(" = true ").append(")");
+//                    if (CollectionUtils.isNotEmpty(toState.getLabels())) {
+//                        for (String label : toState.getLabels()) {
+//                            stringBuilder.append("and ").append("(").append(label).append(" = true ").append(")");
+//                        }
+//                    }
+					stringBuilder.append(" if ");
+
+					stringBuilder.append("(").append(fromState.getName()).append(" = true ").append(")");
+					if (CollectionUtils.isNotEmpty(fromState.getLabels())) {
+						for (String label : fromState.getLabels()) {
+							stringBuilder.append("and ").append("(").append("Environment.").append(label).append(" = true ").append(")");
+						}
+					}
+
+					if (!toState.equals(fromState)) {
+						stringBuilder.append("and ").append("(").append(toState.getName()).append(" = false ").append(")");
+						if (CollectionUtils.isNotEmpty(toState.getLabels())) {
+							for (String label : toState.getLabels()) {
+								if (!fromState.getLabels().contains(label)) {
+									stringBuilder.append("and ").append("(").append("Environment.").append(label).append(" = false ").append(")");
+								}
+							}
+						}
+					}
+
+					stringBuilder.append("and ");
+					if (transition.getAgentActions().size() > 1)
+						stringBuilder.append("(");
+					for (int i = 0; i < transition.getAgentActions().size(); i++) {
+						List<AgentAction> agentActionList = transition.getAgentActions().get(i);
+						stringBuilder.append("(");
+						for (int j = 0; j < agentActionList.size(); j++) {
+							AgentAction agentAction = agentActionList.get(j);
+							stringBuilder.append(agentAction.getAgent()).append(".Action").append(" = ").append(agentAction.getAction());
+							if (j < agentActionList.size() - 1)
+								stringBuilder.append(" and ");
+						}
+						stringBuilder.append(")");
+						if (i < transition.getAgentActions().size() - 1)
+							stringBuilder.append(" or ").append(System.lineSeparator()).append("\t\t\t\t\t");
+					}
+					if (transition.getAgentActions().size() > 1)
+						stringBuilder.append(")");
+
+					if (transition.getMultipleAgentActions().size() > 1)
+						stringBuilder.append("(");
+					for (int i = 0; i < transition.getMultipleAgentActions().size(); i++) {
+						MultipleAgentAction multiAction = transition.getMultipleAgentActions().get(i);
+						stringBuilder.append("(");
+						for (int j = 0; j < multiAction.getActions().size(); j++) {
+							String agentAction = multiAction.getActions().get(j);
+							stringBuilder.append(multiAction.getAgent()).append(".Action").append(" = ").append(agentAction);
+							if (j < multiAction.getActions().size() - 1)
+								stringBuilder.append(" or ");
+						}
+						stringBuilder.append(")");
+						if (i < transition.getMultipleAgentActions().size() - 1)
+							stringBuilder.append(" or ").append(System.lineSeparator()).append("\t\t\t\t\t");
+					}
+					if (transition.getMultipleAgentActions().size() > 1)
+						stringBuilder.append(")");
+
+					stringBuilder.append(";").append(System.lineSeparator());
+//                if(toState == toStateAux) {
+//                toState.setName(toState.getName().substring(12));
+//                }
+					if (fromState == fromStateAux) {
+						fromState.setName(fromState.getName().substring(12));
+					}
+				}
+			}
 			stringBuilder.append("\t").append("end Evolution").append(System.lineSeparator());
 			stringBuilder.append("end Agent").append(System.lineSeparator());
 		}
@@ -359,27 +565,30 @@ public class AbstractionUtils {
 		}
 		stringBuilder.append("\t").append("end Evaluation").append(System.lineSeparator());
 
+		alreadyAddedLabels.clear();
+		HashMap<String, Boolean> initialLabels = new HashMap<>();
+//        HashMap<String, Boolean> initialLabelsAgents = new HashMap<>();
 		stringBuilder.append("\t").append("InitStates").append(System.lineSeparator());
 		for (int i = 0; i < atlModel.getStates().size(); i++) {
 			State state = atlModel.getStates().get(i);
 			stringBuilder.append("\t").append("\t").append("Environment.").append(state.getName()).append(" = ").append(state.isInitial());
 			if (CollectionUtils.isNotEmpty(state.getLabels())) {
-				stringBuilder.append(" and ").append(System.lineSeparator());
 				for (int j = 0; j < state.getLabels().size(); j++) {
 					String label = state.getLabels().get(j);
-					stringBuilder.append("\t").append("\t").append("Environment.").append(label).append(" = ").append(state.isInitial());
-					if (j<state.getLabels().size()-1)
-						stringBuilder.append(" and ").append(System.lineSeparator());
+					if(initialLabels.containsKey(label)) {
+						if(state.isInitial()) {
+							initialLabels.put(label, state.isInitial());
+						}
+					} else {
+						initialLabels.put(label, state.isInitial());
+					}
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(state.getFalseLabels())) {
-				stringBuilder.append(" and ").append(System.lineSeparator());
 				for (int j = 0; j < state.getFalseLabels().size(); j++) {
-					String label = state.getFalseLabels().get(j);
-					stringBuilder.append("\t").append("\t").append("Environment.").append(label).append(" = false");
-					if (j<state.getFalseLabels().size()-1)
-						stringBuilder.append(" and ").append(System.lineSeparator());
+					String label = state.getLabels().get(j);
+					initialLabels.putIfAbsent(label, false);
 				}
 			}
 
@@ -388,15 +597,45 @@ public class AbstractionUtils {
 			}
 		}
 
-		if (CollectionUtils.isNotEmpty(atlModel.getAgents())) {
-			stringBuilder.append(" and ").append(System.lineSeparator());
-			for (int i = 0; i < atlModel.getAgents().size(); i++) {
-				Agent agent = atlModel.getAgents().get(i);
-				stringBuilder.append("\t").append("\t").append(agent.getName()).append(".play = true");
-				if (i<atlModel.getAgents().size()-1)
-					stringBuilder.append(" and ").append(System.lineSeparator());
+		for(Agent agent : atlModel.getAgents()) {
+			for(List<String> lIndS : agent.getIndistinguishableStates()) {
+				stringBuilder.append(" and ").append(System.lineSeparator());
+				stringBuilder.append("\t").append("\t").append(agent.getName()).append(".").append("imp_").append(String.join("_", lIndS)).append(" = ").append(atlModel.getStates().stream().anyMatch(s -> lIndS.contains(s.getName()) && s.isInitial()));
+//                for(String s : lIndS) {
+//                    List<String> l = atlModel.getState(s).getLabels();
+//                    if(CollectionUtils.isNotEmpty(l)) {
+//                        for (String label : l) {
+//                            if (initialLabelsAgents.containsKey(label)) {
+//                                if (atlModel.getState(s).isInitial()) {
+//                                    initialLabelsAgents.put(agent.getName() + "." + label, atlModel.getState(s).isInitial());
+//                                }
+//                            } else {
+//                                initialLabelsAgents.put(agent.getName() + "." + label, atlModel.getState(s).isInitial());
+//                            }
+//                        }
+//                    }
+//                }
 			}
 		}
+
+		for(Entry<String, Boolean> initialLabel : initialLabels.entrySet()) {
+			stringBuilder.append(" and ").append(System.lineSeparator());
+			stringBuilder.append("\t").append("\t").append("Environment.").append(initialLabel.getKey()).append(" = ").append(initialLabel.getValue());
+		}
+//        for(Entry<String, Boolean> initialLabel : initialLabelsAgents.entrySet()) {
+//            stringBuilder.append(" and ").append(System.lineSeparator());
+//            stringBuilder.append("\t").append("\t").append(initialLabel.getKey()).append(" = ").append(initialLabel.getValue());
+//        }
+
+//        if (CollectionUtils.isNotEmpty(atlModel.getAgents())) {
+//            stringBuilder.append(" and ").append(System.lineSeparator());
+//            for (int i = 0; i < atlModel.getAgents().size(); i++) {
+//                Agent agent = atlModel.getAgents().get(i);
+//                stringBuilder.append("\t").append("\t").append(agent.getName()).append(".play = true");
+//                if (i<atlModel.getAgents().size()-1)
+//                    stringBuilder.append(" and ").append(System.lineSeparator());
+//            }
+//        }
 
 		stringBuilder.append(";").append(System.lineSeparator()).append("\t").append("end InitStates").append(System.lineSeparator());
 
@@ -410,7 +649,7 @@ public class AbstractionUtils {
 		stringBuilder.append("\t");
 //		if (isMayModel)
 //			stringBuilder.append("!(");
-		stringBuilder.append(atlModel.getFormula());
+		stringBuilder.append(atlModel.getATL());
 //		stringBuilder.append("<").append(atlModel.getGroup().getName()).append(">").append(atlModel.getFormula().getSubformula());
 //		if (isMayModel)
 //			stringBuilder.append(")");

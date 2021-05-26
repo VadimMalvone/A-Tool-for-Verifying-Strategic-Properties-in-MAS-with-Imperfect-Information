@@ -64,8 +64,11 @@ public class StateCluster extends State {
 				allLabels = ListUtils.union(allLabels, childStates.get(i).getLabels());
 			}
 		}
-		setLabels(labels.stream().distinct().collect(Collectors.toList()));
-		setFalseLabels(ListUtils.subtract(allLabels, labels).stream().distinct().collect(Collectors.toList()));
+		List<String> res = new ArrayList<>();
+		res.addAll(labels.stream().filter(l -> l.endsWith("_tt")).distinct().collect(Collectors.toList()));
+		res.addAll(ListUtils.subtract(allLabels, labels.stream().filter(l -> l.endsWith("_tt")).map(l -> l.replace("_tt", "_ff")).collect(Collectors.toList())).stream().filter(l -> l.endsWith("_ff")).distinct().collect(Collectors.toList()));
+		setLabels(res);
+		setFalseLabels(res.stream().map(l -> l.endsWith("_tt") ? l.replace("_tt", "_ff") : l.replace("_ff", "_tt")).collect(Collectors.toList()));
 	}
 	
 	public State toState() {

@@ -6,6 +6,7 @@ atlExpr : ('!' | 'not') child=atlExpr                                  # Negatio
      | ('eventually' | 'F') child=atlExpr                              # Eventually
      | ('always' | 'G') child=atlExpr                                  # Always
      | left=atlExpr ('until' | 'U') right=atlExpr                      # Until
+     | left=atlExpr ('release' | 'R') right=atlExpr                      # Release
      // boolean operators
      | left=atlExpr ('&&' | 'and') right=atlExpr                       # Conjunction
      | left=atlExpr ('||' | 'or') right=atlExpr                        # Disjunction

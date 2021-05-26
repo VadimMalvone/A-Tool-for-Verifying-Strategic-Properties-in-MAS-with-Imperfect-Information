@@ -19,7 +19,7 @@ public class ATLParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
-		T__17=18, T__18=19, T__19=20, ATOM=21, WS=22;
+		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, ATOM=23, WS=24;
 	public static final int
 		RULE_atlExpr = 0, RULE_atomExpr = 1;
 	private static String[] makeRuleNames() {
@@ -32,15 +32,16 @@ public class ATLParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'!'", "'not'", "'next'", "'X'", "'eventually'", "'F'", "'always'", 
-			"'G'", "'until'", "'U'", "'&&'", "'and'", "'||'", "'or'", "'->'", "'implies'", 
-			"'<'", "'>'", "'('", "')'"
+			"'G'", "'until'", "'U'", "'release'", "'R'", "'&&'", "'and'", "'||'", 
+			"'or'", "'->'", "'implies'", "'<'", "'>'", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, "ATOM", "WS"
+			null, null, null, null, null, null, null, null, null, null, null, "ATOM", 
+			"WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -238,6 +239,22 @@ public class ATLParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class ReleaseContext extends AtlExprContext {
+		public AtlExprContext left;
+		public AtlExprContext right;
+		public List<AtlExprContext> atlExpr() {
+			return getRuleContexts(AtlExprContext.class);
+		}
+		public AtlExprContext atlExpr(int i) {
+			return getRuleContext(AtlExprContext.class,i);
+		}
+		public ReleaseContext(AtlExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof ATLVisitor ) return ((ATLVisitor<? extends T>)visitor).visitRelease(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class UntilContext extends AtlExprContext {
 		public AtlExprContext left;
 		public AtlExprContext right;
@@ -292,7 +309,7 @@ public class ATLParser extends Parser {
 					consume();
 				}
 				setState(6);
-				((NegationContext)_localctx).child = atlExpr(11);
+				((NegationContext)_localctx).child = atlExpr(12);
 				}
 				break;
 			case T__2:
@@ -312,7 +329,7 @@ public class ATLParser extends Parser {
 					consume();
 				}
 				setState(8);
-				((NextContext)_localctx).child = atlExpr(10);
+				((NextContext)_localctx).child = atlExpr(11);
 				}
 				break;
 			case T__4:
@@ -332,7 +349,7 @@ public class ATLParser extends Parser {
 					consume();
 				}
 				setState(10);
-				((EventuallyContext)_localctx).child = atlExpr(9);
+				((EventuallyContext)_localctx).child = atlExpr(10);
 				}
 				break;
 			case T__6:
@@ -352,35 +369,35 @@ public class ATLParser extends Parser {
 					consume();
 				}
 				setState(12);
-				((AlwaysContext)_localctx).child = atlExpr(8);
+				((AlwaysContext)_localctx).child = atlExpr(9);
 				}
 				break;
-			case T__16:
+			case T__18:
 				{
 				_localctx = new StrategicContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(13);
-				match(T__16);
+				match(T__18);
 				setState(14);
 				((StrategicContext)_localctx).group = match(ATOM);
 				setState(15);
-				match(T__17);
+				match(T__19);
 				setState(16);
 				((StrategicContext)_localctx).child = atlExpr(3);
 				}
 				break;
-			case T__18:
+			case T__20:
 				{
 				_localctx = new GroupingContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(17);
-				match(T__18);
+				match(T__20);
 				setState(18);
 				atlExpr(0);
 				setState(19);
-				match(T__19);
+				match(T__21);
 				}
 				break;
 			case ATOM:
@@ -396,7 +413,7 @@ public class ATLParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(38);
+			setState(41);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -404,7 +421,7 @@ public class ATLParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(36);
+					setState(39);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
@@ -413,7 +430,7 @@ public class ATLParser extends Parser {
 						((UntilContext)_localctx).left = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
 						setState(24);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(25);
 						_la = _input.LA(1);
 						if ( !(_la==T__8 || _la==T__9) ) {
@@ -425,16 +442,16 @@ public class ATLParser extends Parser {
 							consume();
 						}
 						setState(26);
-						((UntilContext)_localctx).right = atlExpr(8);
+						((UntilContext)_localctx).right = atlExpr(9);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ConjunctionContext(new AtlExprContext(_parentctx, _parentState));
-						((ConjunctionContext)_localctx).left = _prevctx;
+						_localctx = new ReleaseContext(new AtlExprContext(_parentctx, _parentState));
+						((ReleaseContext)_localctx).left = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
 						setState(27);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(28);
 						_la = _input.LA(1);
 						if ( !(_la==T__10 || _la==T__11) ) {
@@ -446,16 +463,16 @@ public class ATLParser extends Parser {
 							consume();
 						}
 						setState(29);
-						((ConjunctionContext)_localctx).right = atlExpr(7);
+						((ReleaseContext)_localctx).right = atlExpr(8);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new DisjunctionContext(new AtlExprContext(_parentctx, _parentState));
-						((DisjunctionContext)_localctx).left = _prevctx;
+						_localctx = new ConjunctionContext(new AtlExprContext(_parentctx, _parentState));
+						((ConjunctionContext)_localctx).left = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
 						setState(30);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(31);
 						_la = _input.LA(1);
 						if ( !(_la==T__12 || _la==T__13) ) {
@@ -467,16 +484,16 @@ public class ATLParser extends Parser {
 							consume();
 						}
 						setState(32);
-						((DisjunctionContext)_localctx).right = atlExpr(6);
+						((ConjunctionContext)_localctx).right = atlExpr(7);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new ImpliesContext(new AtlExprContext(_parentctx, _parentState));
-						((ImpliesContext)_localctx).left = _prevctx;
+						_localctx = new DisjunctionContext(new AtlExprContext(_parentctx, _parentState));
+						((DisjunctionContext)_localctx).left = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
 						setState(33);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(34);
 						_la = _input.LA(1);
 						if ( !(_la==T__14 || _la==T__15) ) {
@@ -488,13 +505,34 @@ public class ATLParser extends Parser {
 							consume();
 						}
 						setState(35);
+						((DisjunctionContext)_localctx).right = atlExpr(6);
+						}
+						break;
+					case 5:
+						{
+						_localctx = new ImpliesContext(new AtlExprContext(_parentctx, _parentState));
+						((ImpliesContext)_localctx).left = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_atlExpr);
+						setState(36);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(37);
+						_la = _input.LA(1);
+						if ( !(_la==T__16 || _la==T__17) ) {
+						_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
+						setState(38);
 						((ImpliesContext)_localctx).right = atlExpr(5);
 						}
 						break;
 					}
 					} 
 				}
-				setState(40);
+				setState(43);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -530,7 +568,7 @@ public class ATLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(41);
+			setState(44);
 			match(ATOM);
 			}
 		}
@@ -555,33 +593,35 @@ public class ATLParser extends Parser {
 	private boolean atlExpr_sempred(AtlExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 7);
+			return precpred(_ctx, 8);
 		case 1:
-			return precpred(_ctx, 6);
+			return precpred(_ctx, 7);
 		case 2:
-			return precpred(_ctx, 5);
+			return precpred(_ctx, 6);
 		case 3:
+			return precpred(_ctx, 5);
+		case 4:
 			return precpred(_ctx, 4);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30.\4\2\t\2\4\3\t"+
-		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\'"+
-		"\n\2\f\2\16\2*\13\2\3\3\3\3\3\3\2\3\2\4\2\4\2\n\3\2\3\4\3\2\5\6\3\2\7"+
-		"\b\3\2\t\n\3\2\13\f\3\2\r\16\3\2\17\20\3\2\21\22\2\65\2\30\3\2\2\2\4+"+
-		"\3\2\2\2\6\7\b\2\1\2\7\b\t\2\2\2\b\31\5\2\2\r\t\n\t\3\2\2\n\31\5\2\2\f"+
-		"\13\f\t\4\2\2\f\31\5\2\2\13\r\16\t\5\2\2\16\31\5\2\2\n\17\20\7\23\2\2"+
-		"\20\21\7\27\2\2\21\22\7\24\2\2\22\31\5\2\2\5\23\24\7\25\2\2\24\25\5\2"+
-		"\2\2\25\26\7\26\2\2\26\31\3\2\2\2\27\31\5\4\3\2\30\6\3\2\2\2\30\t\3\2"+
-		"\2\2\30\13\3\2\2\2\30\r\3\2\2\2\30\17\3\2\2\2\30\23\3\2\2\2\30\27\3\2"+
-		"\2\2\31(\3\2\2\2\32\33\f\t\2\2\33\34\t\6\2\2\34\'\5\2\2\n\35\36\f\b\2"+
-		"\2\36\37\t\7\2\2\37\'\5\2\2\t !\f\7\2\2!\"\t\b\2\2\"\'\5\2\2\b#$\f\6\2"+
-		"\2$%\t\t\2\2%\'\5\2\2\7&\32\3\2\2\2&\35\3\2\2\2& \3\2\2\2&#\3\2\2\2\'"+
-		"*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\3\3\2\2\2*(\3\2\2\2+,\7\27\2\2,\5\3\2\2"+
-		"\2\5\30&(";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\32\61\4\2\t\2\4\3"+
+		"\t\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
+		"\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
+		"\3\2\3\2\7\2*\n\2\f\2\16\2-\13\2\3\3\3\3\3\3\2\3\2\4\2\4\2\13\3\2\3\4"+
+		"\3\2\5\6\3\2\7\b\3\2\t\n\3\2\13\f\3\2\r\16\3\2\17\20\3\2\21\22\3\2\23"+
+		"\24\29\2\30\3\2\2\2\4.\3\2\2\2\6\7\b\2\1\2\7\b\t\2\2\2\b\31\5\2\2\16\t"+
+		"\n\t\3\2\2\n\31\5\2\2\r\13\f\t\4\2\2\f\31\5\2\2\f\r\16\t\5\2\2\16\31\5"+
+		"\2\2\13\17\20\7\25\2\2\20\21\7\31\2\2\21\22\7\26\2\2\22\31\5\2\2\5\23"+
+		"\24\7\27\2\2\24\25\5\2\2\2\25\26\7\30\2\2\26\31\3\2\2\2\27\31\5\4\3\2"+
+		"\30\6\3\2\2\2\30\t\3\2\2\2\30\13\3\2\2\2\30\r\3\2\2\2\30\17\3\2\2\2\30"+
+		"\23\3\2\2\2\30\27\3\2\2\2\31+\3\2\2\2\32\33\f\n\2\2\33\34\t\6\2\2\34*"+
+		"\5\2\2\13\35\36\f\t\2\2\36\37\t\7\2\2\37*\5\2\2\n !\f\b\2\2!\"\t\b\2\2"+
+		"\"*\5\2\2\t#$\f\7\2\2$%\t\t\2\2%*\5\2\2\b&\'\f\6\2\2\'(\t\n\2\2(*\5\2"+
+		"\2\7)\32\3\2\2\2)\35\3\2\2\2) \3\2\2\2)#\3\2\2\2)&\3\2\2\2*-\3\2\2\2+"+
+		")\3\2\2\2+,\3\2\2\2,\3\3\2\2\2-+\3\2\2\2./\7\31\2\2/\5\3\2\2\2\5\30)+";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

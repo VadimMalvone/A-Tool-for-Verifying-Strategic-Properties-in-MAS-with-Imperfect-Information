@@ -107,11 +107,13 @@ public class AbstractionController {
 	    	mustAtlModel = JsonObject.load(transformBean.getAtlModel(), AtlModel.class);
 	    	mustAtlModel.setStates(mustStateClusters);
 	    	mustAtlModel.setTransitions(mustTransitions);
+	    	mustAtlModel.setATL(atlModel.getATL().transl(true));
 	    	transformBean.setMustAtlModel(mustAtlModel.toString());
 
 	    	mayAtlModel = JsonObject.load(transformBean.getAtlModel(), AtlModel.class);
 	    	mayAtlModel.setStates(mayStateClusters);
 	    	mayAtlModel.setTransitions(mayTransitions);
+			mayAtlModel.setATL(atlModel.getATL().transl(false));
 	    	transformBean.setMayAtlModel(mayAtlModel.toString());
 	    	
 	    	transformBean.setDotAtlModel(AbstractionUtils.generateDotGraph(atlModel));

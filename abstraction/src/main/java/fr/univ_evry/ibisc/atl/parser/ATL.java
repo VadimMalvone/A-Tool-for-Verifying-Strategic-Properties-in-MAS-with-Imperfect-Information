@@ -1,5 +1,7 @@
 package fr.univ_evry.ibisc.atl.parser;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public abstract class ATL implements Cloneable {
 
     public abstract boolean isLTL();
     public abstract List<String> getTerms();
+    public abstract ATL transl(boolean v);
     @Override
     public abstract ATL clone();
 
@@ -54,6 +57,17 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
+        public Atom transl(boolean v) {
+            if(atom.equals("true")) {
+                return new Atom("false");
+            } else if (atom.equals("false")) {
+                return new Atom("true");
+            } else {
+                return new Atom(atom + (v ? "_tt" : "_ff"));
+            }
+        }
+
+        @Override
         public Atom clone() {
             return new Atom(atom);
         }
@@ -87,6 +101,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public List<String> getTerms() {
             return subFormula.getTerms();
+        }
+
+        @Override
+        public Next transl(boolean v) {
+            return new Next(subFormula.transl(v));
         }
 
         @Override
@@ -139,6 +158,11 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
+        public And transl(boolean v) {
+            return new And(left.transl(v), right.transl(v));
+        }
+
+        @Override
         public And clone() {
             return new And(left.clone(), right.clone());
         }
@@ -155,7 +179,7 @@ public abstract class ATL implements Cloneable {
 
         @Override
         public String toString() {
-            return "(" + left.toString() + " and " + right.toString() + ")";
+            return "(" + left.toString() + " or " + right.toString() + ")";
         }
 
         public ATL getLeft() {
@@ -185,6 +209,11 @@ public abstract class ATL implements Cloneable {
             list.addAll(left.getTerms());
             list.addAll(right.getTerms());
             return list;
+        }
+
+        @Override
+        public Or transl(boolean v) {
+            return new Or(left.transl(v), right.transl(v));
         }
 
         @Override
@@ -204,7 +233,7 @@ public abstract class ATL implements Cloneable {
 
         @Override
         public String toString() {
-            return "(" + left.toString() + " U " + right.toString() + ")";
+            return "(" + left.toString() + " -> " + right.toString() + ")";
         }
 
         public ATL getLeft() {
@@ -234,6 +263,11 @@ public abstract class ATL implements Cloneable {
             list.addAll(left.getTerms());
             list.addAll(right.getTerms());
             return list;
+        }
+
+        @Override
+        public Implies transl(boolean v) {
+            return new Implies(left.transl(v), right.transl(v));
         }
 
         @Override
@@ -273,6 +307,11 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
+        public Eventually transl(boolean v) {
+            return new Eventually(subFormula.transl(v));
+        }
+
+        @Override
         public Eventually clone() {
             return new Eventually(subFormula.clone());
         }
@@ -287,7 +326,7 @@ public abstract class ATL implements Cloneable {
 
         @Override
         public String toString() {
-            return "F(" + subFormula.toString() + ")";
+            return "G(" + subFormula.toString() + ")";
         }
 
         public ATL getSubFormula() {
@@ -306,6 +345,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public List<String> getTerms() {
             return subFormula.getTerms();
+        }
+
+        @Override
+        public Globally transl(boolean v) {
+            return new Globally(subFormula.transl(v));
         }
 
         @Override
@@ -358,8 +402,68 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
+        public ATL transl(boolean v) {
+//            return v ? new Until(left.transl(true), right.transl(true)) : new Release(left.transl(false), right.transl(false));
+            return v ? new Until(left.transl(true), right.transl(true)) : new Or(new Until(right.transl(false), left.transl(false)), new Globally(right.transl(false)));
+        }
+
+        @Override
         public Until clone() {
             return new Until(left.clone(), right.clone());
+        }
+    }
+
+    public static class Release extends ATL {
+        private ATL left;
+        private ATL right;
+
+        public Release(ATL left, ATL right) {
+            this.left = left;
+            this.right = right;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + left.toString() + " R " + right.toString() + ")";
+        }
+
+        public ATL getLeft() {
+            return left;
+        }
+
+        public void setLeft(ATL left) {
+            this.left = left;
+        }
+
+        public ATL getRight() {
+            return right;
+        }
+
+        public void setRight(ATL right) {
+            this.right = right;
+        }
+
+        @Override
+        public boolean isLTL() {
+            return left.isLTL() && right.isLTL();
+        }
+
+        @Override
+        public List<String> getTerms() {
+            List<String> list = new ArrayList<>();
+            list.addAll(left.getTerms());
+            list.addAll(right.getTerms());
+            return list;
+        }
+
+        @Override
+        public ATL transl(boolean v) {
+            return v ? new Release(left.transl(true), right.transl(true)) : new Until(left.transl(false), right.transl(false));
+        }
+
+        @Override
+        public Release clone() {
+            return new Release(left.clone(), right.clone());
         }
     }
 
@@ -394,6 +498,11 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
+        public ATL transl(boolean v) {
+            return subFormula.transl(!v);
+        }
+
+        @Override
         public Not clone() {
             return new Not(subFormula.clone());
         }
@@ -409,7 +518,7 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public String toString() { return "<" + group + ">" + "(" + subFormula.toString() + ")"; }
+        public String toString() { return "<" + group + ">" + subFormula.toString(); }
 
         public ATL getSubFormula() {
             return subFormula;
@@ -429,6 +538,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public List<String> getTerms() {
             return subFormula.getTerms();
+        }
+
+        @Override
+        public Strategic transl(boolean v) {
+            return new Strategic(group, subFormula.transl(v));
         }
 
         @Override

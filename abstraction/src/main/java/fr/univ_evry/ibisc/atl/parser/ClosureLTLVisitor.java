@@ -90,6 +90,17 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
     }
 
     @Override
+    public ATL visitRelease(ATLParser.ReleaseContext ctx) {
+        ATL.Release release = new ATL.Release(visit(ctx.left), visit(ctx.right));
+        ATL.Not not = new ATL.Not(release);
+//        LTL.Not notNot = new LTL.Not(not);
+        closure.add(release);
+        closure.add(not);
+//        closure.add(notNot);
+        return release;
+    }
+
+    @Override
     public ATL visitAtomExpr(ATLParser.AtomExprContext ctx) {
         ATL.Atom atom = new ATL.Atom(ctx.getText());
         ATL.Not notAtom = new ATL.Not(atom);

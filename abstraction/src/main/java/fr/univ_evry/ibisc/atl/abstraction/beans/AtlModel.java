@@ -148,7 +148,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 		return transitionMap;
 	}
 
-	public static AtlModel product(AtlModel model, ThreeValuedAutomaton automaton) {
+	public static AtlModel product(AtlModel model, Automaton automaton) {
 		AtlModel result = model.clone();
 
 		result.setAgents(model.getAgents());
@@ -287,6 +287,48 @@ public class AtlModel extends JsonObject implements Cloneable {
 		clone.agentMap = null;
 		clone.stateMap = null;
 		return clone;
+	}
+
+	public Automaton toAutomaton() {
+		Set<String> states = this.states.stream().map(State::getName).collect(Collectors.toSet());
+		Set<String> initialStates = new HashSet<>(); // this.states.stream().filter(State::isInitial).map(State::getName).collect(Collectors.toSet());
+		String init = "init";
+		while(states.contains(init)) {
+			init = init + "_init";
+		}
+		states.add(init);
+		initialStates.add(init);
+		Map<String, Map<Set<ATL>, Set<String>>> transitions = new HashMap<>();
+		for(State s : this.states) {
+			Set<ATL> event = new HashSet<>();
+			for(String l : s.getLabels()) {
+				event.add(new ATL.Atom(l));
+			}
+			for(String l : s.getFalseLabels()) {
+				event.add(new ATL.Not(new ATL.Atom(l)));
+			}
+			for(String from : this.transitions.stream().filter(t -> t.getToState().equals(s.getName())).map(Transition::getFromState).collect(Collectors.toSet())) {
+				if(!transitions.containsKey(from)) {
+					transitions.put(from, new HashMap<>());
+				}
+				if(!transitions.get(from).containsKey(event)) {
+					transitions.get(from).put(event, new HashSet<>());
+				}
+				transitions.get(from).get(event).add(s.getName());
+			}
+			if(s.isInitial()) {
+				if(!transitions.containsKey(init)) {
+					transitions.put(init, new HashMap<>());
+				}
+				if(!transitions.get(init).containsKey(event)) {
+					transitions.get(init).put(event, new HashSet<>());
+				}
+				transitions.get(init).get(event).add(s.getName());
+			}
+		}
+		Set<Set<String>> finalStates = new HashSet<>();
+		finalStates.add(this.states.stream().map(State::getName).collect(Collectors.toSet()));
+		return new Automaton(states, initialStates, transitions, finalStates);
 	}
 
 	public List<List<AgentAction>> getPath() {

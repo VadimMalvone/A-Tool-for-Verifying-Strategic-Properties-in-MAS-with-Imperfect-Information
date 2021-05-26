@@ -22,8 +22,12 @@ public class TestParser {
         ParseTree tree = parser.atlExpr();
         ClosureLTLVisitor visitor = new ClosureLTLVisitor();
         ATL property = visitor.visit(tree);
+        ATL pt = property.transl(true);
+        ATL pf = property.transl(false);
         System.out.println("Result: " + visitor.getClosure());
-        ThreeValuedAutomaton automaton = new ThreeValuedAutomaton(property, visitor.getClosure());
+        ClosureLTLVisitor ptVisitor = new ClosureLTLVisitor();
+        ptVisitor.visit(new ATLParser(new CommonTokenStream(new ATLLexer(CharStreams.fromString(pt.toString())))).atlExpr());
+        Automaton automaton = new Automaton(pt, ptVisitor.getClosure(), Automaton.Outcome.Unknown);
         AtlModel atlModel = JsonObject.load(AbstractionUtils.readSampleFile(), AtlModel.class);
 
         AbstractionUtils.validateAtlModel(atlModel);
@@ -39,7 +43,10 @@ public class TestParser {
         mustAtlModel.setStates(mustStateClusters);
         mustAtlModel.setTransitions(mustTransitions);
 
-        AtlModel product = AtlModel.product(mustAtlModel, automaton);
+        Automaton automaton1 = atlModel.toAutomaton();
+        Automaton product = automaton.product(automaton1);
+
+//        AtlModel product = AtlModel.product(mustAtlModel, automaton);
 
         int pippo = 0;
     }
