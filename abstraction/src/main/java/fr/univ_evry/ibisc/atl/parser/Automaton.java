@@ -1,9 +1,11 @@
 package fr.univ_evry.ibisc.atl.parser;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class Automaton {
@@ -40,7 +42,7 @@ public class Automaton {
         return stateLTLMap;
     }
 
-    public Automaton(ATL property, Set<ATL> closure, Outcome outcome) {
+    public Automaton(ATL property, Set<ATL> closure, Outcome outcome, Set<String> alphabet, boolean explicit) {
         ATL[] closureArr = closure.toArray(new ATL[0]);
         int n = closure.size();
         stateLTLMap = new HashMap<>();
@@ -86,9 +88,80 @@ public class Automaton {
         Set<ATL.Until> untils = closure.stream().filter(ltl -> ltl instanceof ATL.Until).map(ltl -> (ATL.Until) ltl).collect(Collectors.toSet());
         Set<ATL.Not> notUntils = closure.stream().filter(ltl -> ltl instanceof ATL.Not && ((ATL.Not) ltl).getSubFormula() instanceof ATL.Until).map(ltl -> (ATL.Not) ltl).collect(Collectors.toSet());
 
-        for(String fromState : states) {
-            Set<ATL> A = stateLTLMap.get(fromState).stream().filter(ltl -> ltl instanceof ATL.Atom || (ltl instanceof ATL.Not && ((ATL.Not) ltl).getSubFormula() instanceof ATL.Atom)).collect(Collectors.toSet());
-            for(String toState : states) {
+        for(String toState : states) {
+            Set<ATL> A = stateLTLMap.get(toState).stream().filter(ltl -> ltl instanceof ATL.Atom || (ltl instanceof ATL.Not && ((ATL.Not) ltl).getSubFormula() instanceof ATL.Atom)).collect(Collectors.toSet());
+            if(explicit){
+                Set<ATL> Aaux = new HashSet<>();
+                for(ATL atl : A) {
+                    if(atl instanceof ATL.Atom) {
+                        if(((ATL.Atom) atl).getAtom().endsWith("_tt")) {
+                            Aaux.add(new ATL.Not(new ATL.Atom(((ATL.Atom) atl).getAtom().replace("_tt", "_ff"))));
+                        } else {
+                            Aaux.add(new ATL.Not(new ATL.Atom(((ATL.Atom) atl).getAtom().replace("_ff", "_tt"))));
+                        }
+                    }
+                }
+                A.addAll(Aaux);
+            }
+            List<Set<ATL>> As =  new ArrayList<>();
+            List<String> updatedAlphabet = new ArrayList<>();
+            for(String a : alphabet) {
+                if(explicit && (A.contains(new ATL.Atom(a + "_tt")) || A.contains(new ATL.Atom(a + "_ff")) || A.contains(new ATL.Not(new ATL.Atom(a + "_tt"))) || A.contains(new ATL.Not(new ATL.Atom(a + "_ff"))))) {
+                    continue;
+                } else if(!explicit && (A.contains(new ATL.Atom(a)) || A.contains(new ATL.Not(new ATL.Atom(a))))) {
+                    continue;
+                }
+                updatedAlphabet.add(a);
+            }
+            boolean[] permutation = new boolean[updatedAlphabet.size()];
+            if(explicit) {
+                for (int i = 0; i < Math.pow(2, updatedAlphabet.size()); i++) {
+                    Set<ATL> A1 = new HashSet<>(A);
+                    for (int j = 0; j < permutation.length; j++) {
+                        if (permutation[j]) {
+                            A1.add(new ATL.Atom(updatedAlphabet.get(j) + "_tt"));
+                            A1.add(new ATL.Not(new ATL.Atom(updatedAlphabet.get(j) + "_ff")));
+                        } else {
+                            A1.add(new ATL.Atom(updatedAlphabet.get(j) + "_ff"));
+                            A1.add(new ATL.Not(new ATL.Atom(updatedAlphabet.get(j) + "_tt")));
+                        }
+//                        else {
+//                            A1.add(new ATL.Not(new ATL.Atom(updatedAlphabet.get(j) + "_tt")));
+//                            A1.add(new ATL.Not(new ATL.Atom(updatedAlphabet.get(j) + "_ff")));
+//                        }
+                    }
+                    As.add(A1);
+                    for (int j = 0; j < permutation.length; j++) {
+                        if (!permutation[j]) {
+                            permutation[j] = true;
+                            break;
+                        } else {
+                            permutation[j] = false;
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < Math.pow(2, updatedAlphabet.size()); i++) {
+                    Set<ATL> A1 = new HashSet<>(A);
+                    for (int j = 0; j < permutation.length; j++) {
+                        if (permutation[j]) {
+                            A1.add(new ATL.Atom(updatedAlphabet.get(j)));
+                        } else {
+                            A1.add(new ATL.Not(new ATL.Atom(updatedAlphabet.get(j))));
+                        }
+                    }
+                    As.add(A1);
+                    for (int j = 0; j < permutation.length; j++) {
+                        if (!permutation[j]) {
+                            permutation[j] = true;
+                            break;
+                        } else {
+                            permutation[j] = false;
+                        }
+                    }
+                }
+            }
+            for(String fromState : states) {
                 boolean exclude = false;
                 for(ATL.Next ltl : nexts) {
                     if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(toState).contains(ltl.getSubFormula())) {
@@ -150,20 +223,23 @@ public class Automaton {
                 if(exclude) {
                     continue;
                 }
-                if(transitions.containsKey(fromState)) {
-                    if(transitions.get(fromState).containsKey(A)) { //.stream().map(String::valueOf).collect(Collectors.joining()))) {
-                        transitions.get(fromState).get(A).add(toState); //.stream().map(String::valueOf).collect(Collectors.joining())).add(toState);
+
+                for(Set<ATL> A1 : As) {
+                    if(transitions.containsKey(fromState)) {
+                        if(transitions.get(fromState).containsKey(A1)) { //.stream().map(String::valueOf).collect(Collectors.joining()))) {
+                            transitions.get(fromState).get(A1).add(toState); //.stream().map(String::valueOf).collect(Collectors.joining())).add(toState);
+                        } else {
+                            Set<String> aux = new HashSet<>();
+                            aux.add(toState);
+                            transitions.get(fromState).put(A1, aux); //.stream().map(String::valueOf).collect(Collectors.joining()), aux);
+                        }
                     } else {
-                        Set<String> aux = new HashSet<>();
-                        aux.add(toState);
-                        transitions.get(fromState).put(A, aux); //.stream().map(String::valueOf).collect(Collectors.joining()), aux);
+                        Map<Set<ATL>, Set<String>> aux1 = new HashMap<>();
+                        Set<String> aux2 = new HashSet<>();
+                        aux2.add(toState);
+                        aux1.put(A1, aux2); //.stream().map(String::valueOf).collect(Collectors.joining()), aux2);
+                        transitions.put(fromState, aux1);
                     }
-                } else {
-                    Map<Set<ATL>, Set<String>> aux1 = new HashMap<>();
-                    Set<String> aux2 = new HashSet<>();
-                    aux2.add(toState);
-                    aux1.put(A, aux2); //.stream().map(String::valueOf).collect(Collectors.joining()), aux2);
-                    transitions.put(fromState, aux1);
                 }
             }
         }
@@ -377,7 +453,7 @@ public class Automaton {
                              for(String next1 : this.transitions.get(s1).get(event1)) {
                                  for(String next2 : automaton.transitions.get(s2).get(event2)) {
                                      String label = automaton.finalStates.stream().noneMatch(f -> f.contains(next2)) ? "_b" : "_a";
-                                     transitions.get(s1 + "_" + s2 + "_a").get(event1).add(next1 + "_" + next2 + label);
+                                     transitions.get(s1 + "_" + s2 + "_b").get(event1).add(next1 + "_" + next2 + label);
                                  }
                              }
                          }
@@ -386,6 +462,64 @@ public class Automaton {
              }
          }
          return new Automaton(states, initialStates, transitions, finalStates);
+    }
+
+    public Automaton getPath() {
+        for(String initial : initialStates) {
+            Automaton path = getPathAux(new MutableInt(0), initial, new HashMap<>());
+            if(path != null) {
+                return path;
+            }
+        }
+        return null;
+    }
+
+    private Automaton getPathAux(MutableInt depth, String state, Map<String, Integer> visited) {
+        if(visited.containsKey(state)) {
+            System.out.println("Already visited: " + state + " with depth " + depth.intValue());
+            for(String finalState : finalStates.stream().findFirst().get()) {
+                if(visited.containsKey(finalState) && visited.get(finalState) >= visited.get(state)) {
+                    Set<String> states = new HashSet<>();
+                    Set<String> initialStates = new HashSet<>();
+                    Map<String, Map<Set<ATL>, Set<String>>> transitions = new HashMap<>();
+                    Set<Set<String>> finalStates = new HashSet<>();
+                    states.add(state);
+                    finalStates.add(Stream.of(finalState).collect(Collectors.toSet()));
+                    return new Automaton(states, initialStates, transitions, finalStates);
+                }
+            }
+        } else {
+            int depthAux = depth.intValue();
+            visited.put(state, depth.intValue());
+            depth.increment();
+            Map<String, Set<Set<ATL>>> events = new HashMap<>();
+            for(Map.Entry<Set<ATL>, Set<String>> next : this.transitions.get(state).entrySet()) {
+                for(String nextState : next.getValue()) {
+                    if (!events.containsKey(nextState)) {
+                        events.put(nextState, new HashSet<>());
+                    }
+                    events.get(nextState).add(next.getKey());
+                }
+            }
+            for(Map.Entry<String, Set<Set<ATL>>> next : events.entrySet()) {
+                String nextState = next.getKey();
+                Automaton path = getPathAux(depth, nextState, visited);
+                if(path != null) {
+                    path.states.add(state);
+                    Map<Set<ATL>, Set<String>> auxMap = new HashMap<>();
+                    for(Set<ATL> event : next.getValue()) {
+                        auxMap.put(event, Stream.of(nextState).collect(Collectors.toSet()));
+                    }
+                    if(depthAux == 0) {
+                        path.initialStates.add(state);
+                    }
+                    path.transitions.put(state, auxMap);
+                    return path;
+                }
+            }
+        }
+        visited.remove(state);
+        return null;
     }
 
 }

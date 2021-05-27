@@ -1,16 +1,18 @@
 package fr.univ_evry.ibisc.atl.abstraction;
 
-import fr.univ_evry.ibisc.atl.abstraction.beans.AtlModel;
-import fr.univ_evry.ibisc.atl.abstraction.beans.JsonObject;
-import fr.univ_evry.ibisc.atl.abstraction.beans.StateCluster;
-import fr.univ_evry.ibisc.atl.abstraction.beans.Transition;
+import fr.univ_evry.ibisc.atl.abstraction.beans.*;
 import fr.univ_evry.ibisc.atl.parser.*;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestParser {
 
@@ -27,8 +29,15 @@ public class TestParser {
         System.out.println("Result: " + visitor.getClosure());
         ClosureLTLVisitor ptVisitor = new ClosureLTLVisitor();
         ptVisitor.visit(new ATLParser(new CommonTokenStream(new ATLLexer(CharStreams.fromString(pt.toString())))).atlExpr());
-        Automaton automaton = new Automaton(pt, ptVisitor.getClosure(), Automaton.Outcome.Unknown);
+
         AtlModel atlModel = JsonObject.load(AbstractionUtils.readSampleFile(), AtlModel.class);
+
+        Set<String> alphabet = new HashSet<>();
+        for(List<String> labels : atlModel.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+            alphabet.addAll(labels);
+        }
+        Automaton automaton = new Automaton(pt, ptVisitor.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
+
 
         AbstractionUtils.validateAtlModel(atlModel);
         AbstractionUtils.processDefaultTransitions(atlModel);
@@ -45,6 +54,10 @@ public class TestParser {
 
         Automaton automaton1 = atlModel.toAutomaton();
         Automaton product = automaton.product(automaton1);
+
+
+        Automaton path = product.getPath();
+
 
 //        AtlModel product = AtlModel.product(mustAtlModel, automaton);
 

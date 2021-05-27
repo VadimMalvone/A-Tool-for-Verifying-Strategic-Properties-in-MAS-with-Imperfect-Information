@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -220,6 +222,7 @@
     <configuration name="Parser" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="fr.univ_evry.ibisc.atl.abstraction.TestParser" />
       <module name="abstraction" />
+      <option name="VM_PARAMETERS" value="-Xss1M" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -281,7 +284,8 @@
       <workItem from="1621605571324" duration="2277000" />
       <workItem from="1621839946030" duration="67000" />
       <workItem from="1621840029943" duration="15585000" />
-      <workItem from="1622034456810" duration="6637000" />
+      <workItem from="1622034456810" duration="8036000" />
+      <workItem from="1622097580534" duration="10571000" />
     </task>
     <task id="LOCAL-00001" summary="must transitions generation updated">
       <created>1617869568765</created>
@@ -304,7 +308,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622041219686</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis.">
+      <created>1622041421678</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1622041421678</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -375,17 +386,12 @@
           <option name="timeStamp" value="49" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java</url>
-          <line>50</line>
-          <option name="timeStamp" value="65" />
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java</url>
+          <line>521</line>
+          <option name="timeStamp" value="90" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="Application">
-        <watch expression="automaton.getTransitions().get(&quot;s_6&quot;).get(&quot;b_tt&quot;)" language="JAVA" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
