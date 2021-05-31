@@ -1,5 +1,7 @@
 package fr.univ_evry.ibisc.atl.parser;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,11 +49,12 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
 
     @Override
     public ATL visitEventually(ATLParser.EventuallyContext ctx) {
-        ATL.Eventually eventually = new ATL.Eventually(visit(ctx.getChild(1)));
-        ATL.Not not = new ATL.Not(eventually);
+        ATL subFormula = visit(ctx.getChild(1));
+        ATL.Eventually eventually = new ATL.Eventually(subFormula);
+//        ATL.Not not = new ATL.Not(eventually);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(eventually);
-        closure.add(not);
+        closure.add(new ATL.Until(new ATL.Atom("true"), subFormula));
+        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), subFormula)));
 //        closure.add(notNot);
         return eventually;
     }
@@ -69,11 +72,12 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
 
     @Override
     public ATL visitAlways(ATLParser.AlwaysContext ctx) {
-        ATL.Globally globally = new ATL.Globally(visit(ctx.getChild(1)));
-        ATL.Not not = new ATL.Not(globally);
+        ATL subFormula = visit(ctx.getChild(1));
+        ATL.Globally globally = new ATL.Globally(subFormula);
+//        ATL.Not not = new ATL.Not(globally);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(globally);
-        closure.add(not);
+        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula))));
+        closure.add(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula)));
 //        closure.add(notNot);
         return globally;
     }

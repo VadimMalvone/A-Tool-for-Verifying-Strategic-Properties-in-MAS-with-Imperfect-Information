@@ -64,24 +64,27 @@ public class Automaton {
                 states.add("s_" + id++);
             }
         }
+        states.add("init");
+        stateLTLMap.put("init", new HashSet<>());
 //        for(Set<LTL> set : elementarySets) {
 //            System.out.println(set);
 //        }
-        for(String state : states) {
-            if(outcome == Outcome.Unknown) {
-                if (!stateLTLMap.get(state).contains(property) && !stateLTLMap.get(state).contains(new ATL.Not(property))) {
-                    initialStates.add(state);
-                }
-            } else if(outcome == Outcome.True) {
-                if (stateLTLMap.get(state).contains(property) && !stateLTLMap.get(state).contains(new ATL.Not(property))) {
-                    initialStates.add(state);
-                }
-            } else {
-                if (!stateLTLMap.get(state).contains(property) && stateLTLMap.get(state).contains(new ATL.Not(property))) {
-                    initialStates.add(state);
-                }
-            }
-        }
+        initialStates.add("init");
+//        for(String state : states) {
+//            if(outcome == Outcome.Unknown) {
+//                if (!stateLTLMap.get(state).contains(property) && !stateLTLMap.get(state).contains(new ATL.Not(property))) {
+//                    initialStates.add(state);
+//                }
+//            } else if(outcome == Outcome.True) {
+//                if (stateLTLMap.get(state).contains(property) && !stateLTLMap.get(state).contains(new ATL.Not(property))) {
+//                    initialStates.add(state);
+//                }
+//            } else {
+//                if (!stateLTLMap.get(state).contains(property) && stateLTLMap.get(state).contains(new ATL.Not(property))) {
+//                    initialStates.add(state);
+//                }
+//            }
+//        }
 
         Set<ATL.Next> nexts = closure.stream().filter(ltl -> ltl instanceof ATL.Next).map(ltl -> (ATL.Next) ltl).collect(Collectors.toSet());
         Set<ATL.Not> notNexts = closure.stream().filter(ltl -> ltl instanceof ATL.Not && ((ATL.Not) ltl).getSubFormula() instanceof ATL.Next).map(ltl -> (ATL.Not) ltl).collect(Collectors.toSet());
@@ -162,68 +165,83 @@ public class Automaton {
                 }
             }
             for(String fromState : states) {
-                boolean exclude = false;
-                for(ATL.Next ltl : nexts) {
-                    if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(toState).contains(ltl.getSubFormula())) {
-                        exclude = true;
-                        break;
+                if(fromState.equals("init")) {
+                    if(outcome == Outcome.Unknown) {
+                        if (stateLTLMap.get(toState).contains(property) || stateLTLMap.get(toState).contains(new ATL.Not(property))) {
+                            continue;
+                        }
+                    } else if(outcome == Outcome.True) {
+                        if (!stateLTLMap.get(toState).contains(property) || stateLTLMap.get(toState).contains(new ATL.Not(property))) {
+                            continue;
+                        }
+                    } else {
+                        if (stateLTLMap.get(toState).contains(property) || !stateLTLMap.get(toState).contains(new ATL.Not(property))) {
+                            continue;
+                        }
                     }
-                    if (stateLTLMap.get(toState).contains(ltl.getSubFormula()) && !stateLTLMap.get(fromState).contains(ltl)) {
-                        exclude = true;
-                        break;
+                } else {
+                    boolean exclude = false;
+                    for (ATL.Next ltl : nexts) {
+                        if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(toState).contains(ltl.getSubFormula())) {
+                            exclude = true;
+                            break;
+                        }
+                        if (stateLTLMap.get(toState).contains(ltl.getSubFormula()) && !stateLTLMap.get(fromState).contains(ltl)) {
+                            exclude = true;
+                            break;
+                        }
+                    }
+                    if (exclude) {
+                        continue;
+                    }
+                    for (ATL.Not ltl : notNexts) {
+                        if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(toState).contains(new ATL.Not(((ATL.Next) ltl.getSubFormula()).getSubFormula()))) {
+                            exclude = true;
+                            break;
+                        }
+                        if (!stateLTLMap.get(fromState).contains(ltl) && stateLTLMap.get(toState).contains(new ATL.Not(((ATL.Next) ltl.getSubFormula()).getSubFormula()))) {
+                            exclude = true;
+                            break;
+                        }
+                    }
+                    if (exclude) {
+                        continue;
+                    }
+                    for (ATL.Until ltl : untils) {
+                        if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(fromState).contains(ltl.getRight()) &&
+                                (!stateLTLMap.get(fromState).contains(ltl.getLeft()) || !stateLTLMap.get(toState).contains(ltl))) {
+                            exclude = true;
+                            break;
+                        }
+                        if (!stateLTLMap.get(fromState).contains(ltl) && (stateLTLMap.get(fromState).contains(ltl.getRight()) ||
+                                (stateLTLMap.get(fromState).contains(ltl.getLeft()) && stateLTLMap.get(toState).contains(ltl)))) {
+                            exclude = true;
+                            break;
+                        }
+                    }
+                    if (exclude) {
+                        continue;
+                    }
+                    for (ATL.Not ltl : notUntils) {
+                        if (stateLTLMap.get(fromState).contains(ltl) &&
+                                (!stateLTLMap.get(fromState).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())) ||
+                                        (!stateLTLMap.get(fromState).contains((new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft()))) &&
+                                                !stateLTLMap.get(toState).contains(ltl)))) {
+                            exclude = true;
+                            break;
+                        }
+                        if (!stateLTLMap.get(fromState).contains(ltl) &&
+                                (stateLTLMap.get(fromState).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())) &&
+                                        (stateLTLMap.get(fromState).contains((new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft()))) ||
+                                                stateLTLMap.get(toState).contains(ltl)))) {
+                            exclude = true;
+                            break;
+                        }
+                    }
+                    if (exclude) {
+                        continue;
                     }
                 }
-                if(exclude) {
-                    continue;
-                }
-                for(ATL.Not ltl : notNexts) {
-                    if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(toState).contains(new ATL.Not(((ATL.Next) ltl.getSubFormula()).getSubFormula()))) {
-                        exclude = true;
-                        break;
-                    }
-                    if (!stateLTLMap.get(fromState).contains(ltl) && stateLTLMap.get(toState).contains(new ATL.Not(((ATL.Next) ltl.getSubFormula()).getSubFormula()))) {
-                        exclude = true;
-                        break;
-                    }
-                }
-                if(exclude) {
-                    continue;
-                }
-                for(ATL.Until ltl : untils) {
-                    if (stateLTLMap.get(fromState).contains(ltl) && !stateLTLMap.get(fromState).contains(ltl.getRight()) &&
-                            (!stateLTLMap.get(fromState).contains(ltl.getLeft()) || !stateLTLMap.get(toState).contains(ltl))) {
-                        exclude = true;
-                        break;
-                    }
-                    if (!stateLTLMap.get(fromState).contains(ltl) && (stateLTLMap.get(fromState).contains(ltl.getRight()) ||
-                            (stateLTLMap.get(fromState).contains(ltl.getLeft()) && stateLTLMap.get(toState).contains(ltl)))) {
-                        exclude = true;
-                        break;
-                    }
-                }
-                if(exclude) {
-                    continue;
-                }
-                for(ATL.Not ltl : notUntils) {
-                    if (stateLTLMap.get(fromState).contains(ltl) &&
-                            (!stateLTLMap.get(fromState).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())) ||
-                            (!stateLTLMap.get(fromState).contains((new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft()))) &&
-                                !stateLTLMap.get(toState).contains(ltl)))) {
-                        exclude = true;
-                        break;
-                    }
-                    if (!stateLTLMap.get(fromState).contains(ltl) &&
-                            (stateLTLMap.get(fromState).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())) &&
-                                    (stateLTLMap.get(fromState).contains((new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft()))) ||
-                                            stateLTLMap.get(toState).contains(ltl)))) {
-                        exclude = true;
-                        break;
-                    }
-                }
-                if(exclude) {
-                    continue;
-                }
-
                 for(Set<ATL> A1 : As) {
                     if(transitions.containsKey(fromState)) {
                         if(transitions.get(fromState).containsKey(A1)) { //.stream().map(String::valueOf).collect(Collectors.joining()))) {
@@ -243,25 +261,30 @@ public class Automaton {
                 }
             }
         }
-        for(ATL.Until ltl : untils) {
-            Set<String> finalState = new HashSet<>();
-            for(String state : states) {
-                if(!stateLTLMap.get(state).contains(ltl) || stateLTLMap.get(state).contains(ltl.getRight())) {
-                    finalState.add(state);
-                }
-            }
+        if(untils.isEmpty() && notUntils.isEmpty()) {
+            Set<String> finalState = new HashSet<>(states);
             finalStates.add(finalState);
-        }
-        for(ATL.Not ltl : notUntils) {
-            Set<String> finalState = new HashSet<>();
-            for(String state : states) {
-                if(!stateLTLMap.get(state).contains(ltl) ||
-                    (stateLTLMap.get(state).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft())) &&
-                        stateLTLMap.get(state).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())))) {
-                    finalState.add(state);
+        } else {
+            for (ATL.Until ltl : untils) {
+                Set<String> finalState = new HashSet<>();
+                for (String state : states) {
+                    if (!stateLTLMap.get(state).contains(ltl) || stateLTLMap.get(state).contains(ltl.getRight())) {
+                        finalState.add(state);
+                    }
                 }
+                finalStates.add(finalState);
             }
-            finalStates.add(finalState);
+            for (ATL.Not ltl : notUntils) {
+                Set<String> finalState = new HashSet<>();
+                for (String state : states) {
+                    if (!stateLTLMap.get(state).contains(ltl) ||
+                            (stateLTLMap.get(state).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getLeft())) &&
+                                    stateLTLMap.get(state).contains(new ATL.Not(((ATL.Until) ltl.getSubFormula()).getRight())))) {
+                        finalState.add(state);
+                    }
+                }
+                finalStates.add(finalState);
+            }
         }
     }
 

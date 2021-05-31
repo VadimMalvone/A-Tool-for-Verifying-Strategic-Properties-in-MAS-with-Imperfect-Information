@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public class TestParser {
 
     public static void main(String[] args) throws Exception {
-        String expression = "<g1> (b U r1)";
+        String expression = "X p";
         CharStream codePointCharStream = CharStreams.fromString(expression);
         ATLLexer lexer = new ATLLexer(codePointCharStream);
         ATLParser parser = new ATLParser(new CommonTokenStream(lexer));
@@ -38,6 +38,10 @@ public class TestParser {
         }
         Automaton automaton = new Automaton(pt, ptVisitor.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
 
+        Set<String> alphabet2 = new HashSet<>();
+        alphabet2.add("p");
+        alphabet2.add("q");
+        Automaton automaton2 = new Automaton(property, visitor.getClosure(), Automaton.Outcome.True, alphabet2, false);
 
         AbstractionUtils.validateAtlModel(atlModel);
         AbstractionUtils.processDefaultTransitions(atlModel);

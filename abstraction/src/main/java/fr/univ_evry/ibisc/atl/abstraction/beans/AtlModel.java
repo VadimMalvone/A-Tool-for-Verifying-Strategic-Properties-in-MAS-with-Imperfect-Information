@@ -331,10 +331,5 @@ public class AtlModel extends JsonObject implements Cloneable {
 		return new Automaton(states, initialStates, transitions, finalStates);
 	}
 
-	public List<List<AgentAction>> getPath() {
-		
-
-		return null;
-	}
 
 }

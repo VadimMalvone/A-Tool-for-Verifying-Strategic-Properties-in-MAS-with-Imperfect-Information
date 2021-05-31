@@ -307,8 +307,13 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Eventually transl(boolean v) {
-            return new Eventually(subFormula.transl(v));
+        public ATL transl(boolean v) {
+            if(v) {
+                return new Eventually(subFormula.transl(true));
+            } else {
+                return new Globally(subFormula.transl(false));
+            }
+
         }
 
         @Override
@@ -348,8 +353,12 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Globally transl(boolean v) {
-            return new Globally(subFormula.transl(v));
+        public ATL transl(boolean v) {
+            if(v) {
+                return new Globally(subFormula.transl(true));
+            } else {
+                return new Eventually(subFormula.transl(false));
+            }
         }
 
         @Override
@@ -404,7 +413,7 @@ public abstract class ATL implements Cloneable {
         @Override
         public ATL transl(boolean v) {
 //            return v ? new Until(left.transl(true), right.transl(true)) : new Release(left.transl(false), right.transl(false));
-            return v ? new Until(left.transl(true), right.transl(true)) : new Or(new Until(right.transl(false), left.transl(false)), new Globally(right.transl(false)));
+            return v ? new Until(left.transl(true), right.transl(true)) : new Or(new Until(right.transl(false), new ATL.And(left.transl(false), right.transl(false))), new Globally(right.transl(false)));
         }
 
         @Override
@@ -413,6 +422,7 @@ public abstract class ATL implements Cloneable {
         }
     }
 
+    // to be removed
     public static class Release extends ATL {
         private ATL left;
         private ATL right;

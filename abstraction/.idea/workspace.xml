@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis.">
+    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Fixed Buchi product. Added getPath() to retrieve a path from an automaton (which is an automaton as well).">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ClosureLTLVisitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,7 +288,10 @@
       <workItem from="1621839946030" duration="67000" />
       <workItem from="1621840029943" duration="15585000" />
       <workItem from="1622034456810" duration="8036000" />
-      <workItem from="1622097580534" duration="10571000" />
+      <workItem from="1622097580534" duration="10635000" />
+      <workItem from="1622217987647" duration="132000" />
+      <workItem from="1622218140329" duration="6331000" />
+      <workItem from="1622443137622" duration="3033000" />
     </task>
     <task id="LOCAL-00001" summary="must transitions generation updated">
       <created>1617869568765</created>
@@ -315,7 +321,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622041421678</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed Buchi product. Added getPath() to retrieve a path from an automaton (which is an automaton as well).">
+      <created>1622115401814</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1622115401814</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -370,16 +383,12 @@
     <MESSAGE value="must transitions generation updated" />
     <MESSAGE value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features." />
     <MESSAGE value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis." />
+    <MESSAGE value="Fixed Buchi product. Added getPath() to retrieve a path from an automaton (which is an automaton as well)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Buchi product. Added getPath() to retrieve a path from an automaton (which is an automaton as well)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java</url>
-          <line>285</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java</url>
           <line>57</line>
@@ -387,8 +396,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java</url>
-          <line>521</line>
+          <line>544</line>
           <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java</url>
+          <line>46</line>
+          <option name="timeStamp" value="91" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
