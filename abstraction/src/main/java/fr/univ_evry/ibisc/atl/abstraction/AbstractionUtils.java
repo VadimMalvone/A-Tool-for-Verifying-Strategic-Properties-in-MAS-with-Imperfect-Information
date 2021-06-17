@@ -1000,11 +1000,13 @@ public class AbstractionUtils {
 						goodStates.add(stateCluster);
 					}
 				}
-				String atom = "atom" + i;
+				// To-Do atom_tt e atom_ff
+				String atom_tt = "atom" + i + "_tt";
+				String atom_ff = "atom" + i + "_ff";
 //				atlModel.getState(state.getName()).getLabels().add(atom); // add(atom, s) from paper (removed because it seems pointless)
-				atlModelMust.updateModel(atom, goodStates);
-				atlModelMay.updateModel(atom, goodStates);
-				atlModel.setATL(atlModel.getATL().updateInnermostFormula(atom));
+				atlModelMust.updateModel(atom_tt, atom_ff, goodStates);
+				atlModelMay.updateModel(atom_tt, atom_ff, goodStates);
+				atlModel.setATL(atlModel.getATL().updateInnermostFormula(atom_tt));
 				i++;
 				innermostFormula = atlModel.getATL().innermostFormula();
 			}

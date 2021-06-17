@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Fixed Buchi Automaton generation from LTL formula.">
+    <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Finished the model checking procedure (still to test).">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -297,7 +293,7 @@
       <workItem from="1622562988180" duration="201000" />
       <workItem from="1622563496996" duration="74000" />
       <workItem from="1623921704714" duration="6946000" />
-      <workItem from="1623940996364" duration="1922000" />
+      <workItem from="1623940996364" duration="3175000" />
     </task>
     <task id="LOCAL-00001" summary="must transitions generation updated">
       <created>1617869568765</created>
@@ -341,7 +337,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622446564579</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Finished the model checking procedure (still to test).">
+      <created>1623943181986</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1623943181986</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -398,7 +401,8 @@
     <MESSAGE value="Updated parser to handle ATL properties. Integrated new ATL property into json model file. Updated the code to use new features. Added first attempt of mapping from CGS to Buchi, and of product between buchis." />
     <MESSAGE value="Fixed Buchi product. Added getPath() to retrieve a path from an automaton (which is an automaton as well)." />
     <MESSAGE value="Fixed Buchi Automaton generation from LTL formula." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed Buchi Automaton generation from LTL formula." />
+    <MESSAGE value="Finished the model checking procedure (still to test)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished the model checking procedure (still to test)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
