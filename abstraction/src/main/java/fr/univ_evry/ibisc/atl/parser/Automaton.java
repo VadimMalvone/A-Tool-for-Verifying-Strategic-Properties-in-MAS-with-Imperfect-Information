@@ -545,4 +545,15 @@ public class Automaton {
         return null;
     }
 
+    public void moveInitialStateof(int n) {
+        for(;n > 0; n--) {
+            Set<String> newInitialStates = new HashSet<>();
+            for (String init : initialStates) {
+                for (Map.Entry<Set<ATL>, Set<String>> event : transitions.get(init).entrySet()) {
+                    newInitialStates.addAll(event.getValue());
+                }
+            }
+            this.initialStates = newInitialStates;
+        }
+    }
 }

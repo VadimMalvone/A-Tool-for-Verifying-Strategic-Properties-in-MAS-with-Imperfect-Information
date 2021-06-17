@@ -1,8 +1,12 @@
 package fr.univ_evry.ibisc.atl.abstraction.beans;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.univ_evry.ibisc.atl.abstraction.AbstractionUtils;
 import fr.univ_evry.ibisc.atl.parser.*;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -331,5 +335,74 @@ public class AtlModel extends JsonObject implements Cloneable {
 		return new Automaton(states, initialStates, transitions, finalStates);
 	}
 
+	public enum Abstraction { May, Must }
+
+	public AtlModel createAbstraction(Abstraction kind) {
+		if(kind == Abstraction.Must) {
+			List<StateCluster> mustStateClusters = AbstractionUtils.getStateClusters(this);
+			List<Transition> mustTransitions = AbstractionUtils.getMustTransitions(this, mustStateClusters);
+			AtlModel mustAtlModel = this.clone();
+			mustAtlModel.setStates(mustStateClusters);
+			mustAtlModel.setTransitions(mustTransitions);
+			mustAtlModel.setATL(this.getATL().transl(true));
+			return mustAtlModel;
+		} else {
+			List<StateCluster> mayStateClusters = AbstractionUtils.getStateClusters(this);
+			List<Transition> mayTransitions = AbstractionUtils.getMayTransitions(this, mayStateClusters);
+			AtlModel mayAtlModel = this.clone();
+			mayAtlModel.setStates(mayStateClusters);
+			mayAtlModel.setTransitions(mayTransitions);
+			mayAtlModel.setATL(this.getATL().transl(false));
+			return mayAtlModel;
+		}
+	}
+
+	public static Automaton.Outcome modelCheck(AtlModel model) throws IOException {
+		String mcmasProgram = AbstractionUtils.generateMCMASProgram(model, false);
+		String fileName = "/tmp/st" + System.currentTimeMillis() + ".ispl";
+		while (Files.exists(Paths.get(fileName))) {
+			fileName = "/tmp/st" + System.currentTimeMillis() + ".ispl";
+		}
+		Files.write(Paths.get(fileName), mcmasProgram.getBytes());
+		String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
+		if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
+			return Automaton.Outcome.True;
+		} else {
+			return Automaton.Outcome.False;
+		}
+	}
+
+	public static Automaton.Outcome modelCheck(AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
+		String mustMcmasProgram = AbstractionUtils.generateMCMASProgram(mustAtlModel, false);
+		String fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
+		while (Files.exists(Paths.get(fileName))) {
+			fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
+		}
+		Files.write(Paths.get(fileName), mustMcmasProgram.getBytes());
+		String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
+		if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
+			return Automaton.Outcome.True;
+		} else {
+			String mayMcmasProgram = AbstractionUtils.generateMCMASProgram(mayAtlModel, true);
+			fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
+			while (Files.exists(Paths.get(fileName))) {
+				fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
+			}
+			Files.write(Paths.get(fileName), mayMcmasProgram.getBytes());
+			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(fileName);
+			if (!AbstractionUtils.getMcmasResult(mcmasOutputMayAtlModel)) {
+				return Automaton.Outcome.False;
+			}
+		}
+		return Automaton.Outcome.Unknown;
+	}
+
+	public void updateModel(String atom, List<? extends State> states) {
+		for(State s : this.states) {
+			if(states.stream().anyMatch(s1 -> s1.getName().equals(s.getName()))) {
+				s.getLabels().add(atom);
+			}
+		}
+	}
 
 }

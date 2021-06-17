@@ -3,7 +3,9 @@ package fr.univ_evry.ibisc.atl.parser;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class ATL implements Cloneable {
 
@@ -23,6 +25,9 @@ public abstract class ATL implements Cloneable {
     public abstract ATL transl(boolean v);
     @Override
     public abstract ATL clone();
+    public abstract Set<ATL> getClosure();
+    public abstract ATL innermostFormula();
+    public abstract ATL updateInnermostFormula(String atom);
 
     public static class Atom extends ATL {
         private String atom;
@@ -71,6 +76,24 @@ public abstract class ATL implements Cloneable {
         public Atom clone() {
             return new Atom(atom);
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = new HashSet<>();
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            return null;
+        }
+
+        @Override
+        public Atom updateInnermostFormula(String atom) {
+            return this;
+        }
     }
 
     public static class Next extends ATL {
@@ -111,6 +134,24 @@ public abstract class ATL implements Cloneable {
         @Override
         public Next clone() {
             return new Next(this.subFormula.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = subFormula.getClosure();
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            return subFormula.innermostFormula();
+        }
+
+        @Override
+        public Next updateInnermostFormula(String atom) {
+            return new Next(subFormula.updateInnermostFormula(atom));
         }
     }
 
@@ -166,6 +207,33 @@ public abstract class ATL implements Cloneable {
         public And clone() {
             return new And(left.clone(), right.clone());
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = left.getClosure();
+            aux.addAll(right.getClosure());
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(left.innermostFormula() != null) {
+                return left.innermostFormula();
+            } else {
+                return right.innermostFormula();
+            }
+        }
+
+        @Override
+        public And updateInnermostFormula(String atom) {
+            if(left.innermostFormula() != null) {
+                return new And(left.updateInnermostFormula(atom), right);
+            } else {
+                return new And(left, right.updateInnermostFormula(atom));
+            }
+        }
     }
 
     public static class Or extends ATL {
@@ -219,6 +287,33 @@ public abstract class ATL implements Cloneable {
         @Override
         public Or clone() {
             return new Or(left.clone(), right.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = left.getClosure();
+            aux.addAll(right.getClosure());
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(left.innermostFormula() != null) {
+                return left.innermostFormula();
+            } else {
+                return right.innermostFormula();
+            }
+        }
+
+        @Override
+        public Or updateInnermostFormula(String atom) {
+            if(left.innermostFormula() != null) {
+                return new Or(left.updateInnermostFormula(atom), right);
+            } else {
+                return new Or(left, right.updateInnermostFormula(atom));
+            }
         }
     }
 
@@ -274,6 +369,33 @@ public abstract class ATL implements Cloneable {
         public Implies clone() {
             return new Implies(left.clone(), right.clone());
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = left.getClosure();
+            aux.addAll(right.getClosure());
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(left.innermostFormula() != null) {
+                return left.innermostFormula();
+            } else {
+                return right.innermostFormula();
+            }
+        }
+
+        @Override
+        public Implies updateInnermostFormula(String atom) {
+            if(left.innermostFormula() != null) {
+                return new Implies(left.updateInnermostFormula(atom), right);
+            } else {
+                return new Implies(left, right.updateInnermostFormula(atom));
+            }
+        }
     }
 
     public static class Eventually extends ATL {
@@ -320,6 +442,24 @@ public abstract class ATL implements Cloneable {
         public Eventually clone() {
             return new Eventually(subFormula.clone());
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = subFormula.getClosure();
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            return subFormula.innermostFormula();
+        }
+
+        @Override
+        public Eventually updateInnermostFormula(String atom) {
+            return new Eventually(subFormula.updateInnermostFormula(atom));
+        }
     }
 
     public static class Globally extends ATL {
@@ -364,6 +504,24 @@ public abstract class ATL implements Cloneable {
         @Override
         public Globally clone() {
             return new Globally(subFormula.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = subFormula.getClosure();
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            return subFormula.innermostFormula();
+        }
+
+        @Override
+        public Globally updateInnermostFormula(String atom) {
+            return new Globally(subFormula.updateInnermostFormula(atom));
         }
     }
 
@@ -420,6 +578,33 @@ public abstract class ATL implements Cloneable {
         public Until clone() {
             return new Until(left.clone(), right.clone());
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = left.getClosure();
+            aux.addAll(right.getClosure());
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(left.innermostFormula() != null) {
+                return left.innermostFormula();
+            } else {
+                return right.innermostFormula();
+            }
+        }
+
+        @Override
+        public Until updateInnermostFormula(String atom) {
+            if(left.innermostFormula() != null) {
+                return new Until(left.updateInnermostFormula(atom), right);
+            } else {
+                return new Until(left, right.updateInnermostFormula(atom));
+            }
+        }
     }
 
     // to be removed
@@ -475,6 +660,33 @@ public abstract class ATL implements Cloneable {
         public Release clone() {
             return new Release(left.clone(), right.clone());
         }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = left.getClosure();
+            aux.addAll(right.getClosure());
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(left.innermostFormula() != null) {
+                return left.innermostFormula();
+            } else {
+                return right.innermostFormula();
+            }
+        }
+
+        @Override
+        public Release updateInnermostFormula(String atom) {
+            if(left.innermostFormula() != null) {
+                return new Release(left.updateInnermostFormula(atom), right);
+            } else {
+                return new Release(left, right.updateInnermostFormula(atom));
+            }
+        }
     }
 
     public static class Not extends ATL {
@@ -515,6 +727,24 @@ public abstract class ATL implements Cloneable {
         @Override
         public Not clone() {
             return new Not(subFormula.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            Set<ATL> aux = subFormula.getClosure();
+            aux.add(this);
+            aux.add(new ATL.Not(this));
+            return aux;
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            return subFormula.innermostFormula();
+        }
+
+        @Override
+        public Not updateInnermostFormula(String atom) {
+            return new Not(subFormula.updateInnermostFormula(atom));
         }
     }
 
@@ -558,6 +788,29 @@ public abstract class ATL implements Cloneable {
         @Override
         public Strategic clone() {
             return new Strategic(group, subFormula.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            return subFormula.getClosure();
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(subFormula.innermostFormula() == null) {
+                return this;
+            } else {
+                return subFormula.innermostFormula();
+            }
+        }
+
+        @Override
+        public ATL updateInnermostFormula(String atom) {
+            if(subFormula.innermostFormula() == null) {
+                return new Atom(atom);
+            } else {
+                return new Strategic(group, subFormula.updateInnermostFormula(atom));
+            }
         }
     }
 

@@ -43,8 +43,8 @@ public class AbstractionController {
 
 	@PostMapping("/Refine")
 	public String handleRequest(@ModelAttribute TransformBean transformBean, Model model) throws IOException {
-		AbstractionUtils.refinement(mustAtlModel, atlModel, (StateCluster) mustAtlModel.getStates().get(1), AbstractionUtils.Abstraction.Must);
-		AbstractionUtils.refinement(mayAtlModel, atlModel, (StateCluster) mayAtlModel.getStates().get(1), AbstractionUtils.Abstraction.May);
+		AbstractionUtils.refinement(mustAtlModel, mayAtlModel, atlModel, (StateCluster) mustAtlModel.getStates().get(1));
+//		AbstractionUtils.refinement(mayAtlModel, atlModel, (StateCluster) mayAtlModel.getStates().get(1));
 		transformBean.setMustAtlModel(mustAtlModel.toString());
 		transformBean.setMayAtlModel(mayAtlModel.toString());
 		transformBean.setDotMustAtlModel(AbstractionUtils.generateDotGraph(mustAtlModel));
