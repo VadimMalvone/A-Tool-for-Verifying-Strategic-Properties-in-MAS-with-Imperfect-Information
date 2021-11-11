@@ -22,12 +22,19 @@ public abstract class ATL implements Cloneable {
 
     public abstract boolean isLTL();
     public abstract List<String> getTerms();
-    public abstract ATL transl(boolean v);
+    public ATL transl(boolean v) {
+        return transl(v, false);
+    }
+    public abstract ATL transl(boolean v, boolean check);
     @Override
     public abstract ATL clone();
     public abstract Set<ATL> getClosure();
     public abstract ATL innermostFormula();
     public abstract ATL updateInnermostFormula(String atom);
+    public ATL normalForm() {
+        return normalForm(true);
+    }
+    public abstract ATL normalForm(boolean v);
 
     public static class Atom extends ATL {
         private String atom;
@@ -62,11 +69,17 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Atom transl(boolean v) {
+        public ATL transl(boolean v, boolean check) {
             if(atom.equals("true")) {
-                return new Atom("false");
+                return v ? new Atom("true") : new Atom("false");
             } else if (atom.equals("false")) {
-                return new Atom("true");
+                return v ? new Atom("false") : new Atom("true");
+            } else if(check){
+                if(v) {
+                    return new Or(new Atom(atom + "_tt"), new Atom(atom + "_uu"));
+                } else {
+                    return new Or(new Atom(atom + "_ff"), new Atom(atom + "_uu"));
+                }
             } else {
                 return new Atom(atom + (v ? "_tt" : "_ff"));
             }
@@ -93,6 +106,15 @@ public abstract class ATL implements Cloneable {
         @Override
         public Atom updateInnermostFormula(String atom) {
             return this;
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return this;
+            } else {
+                return new Not(this);
+            }
         }
     }
 
@@ -127,8 +149,8 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Next transl(boolean v) {
-            return new Next(subFormula.transl(v));
+        public Next transl(boolean v, boolean check) {
+            return new Next(subFormula.transl(v, check));
         }
 
         @Override
@@ -152,6 +174,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public Next updateInnermostFormula(String atom) {
             return new Next(subFormula.updateInnermostFormula(atom));
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            return new Next(this.subFormula.normalForm(v));
         }
     }
 
@@ -199,8 +226,12 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public And transl(boolean v) {
-            return new And(left.transl(v), right.transl(v));
+        public ATL transl(boolean v, boolean check) {
+            if(v) {
+                return new And(left.transl(true, check), right.transl(true, check));
+            } else {
+                return new Or(left.transl(false, check), right.transl(false, check));
+            }
         }
 
         @Override
@@ -232,6 +263,15 @@ public abstract class ATL implements Cloneable {
                 return new And(left.updateInnermostFormula(atom), right);
             } else {
                 return new And(left, right.updateInnermostFormula(atom));
+            }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new And(this.left.normalForm(true), this.right.normalForm(true));
+            } else {
+                return new Or(this.left.normalForm(false), this.right.normalForm(false));
             }
         }
     }
@@ -280,8 +320,12 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Or transl(boolean v) {
-            return new Or(left.transl(v), right.transl(v));
+        public ATL transl(boolean v, boolean check) {
+            if(v) {
+                return new Or(left.transl(true, check), right.transl(true, check));
+            } else {
+                return new And(left.transl(false, check), right.transl(false, check));
+            }
         }
 
         @Override
@@ -313,6 +357,15 @@ public abstract class ATL implements Cloneable {
                 return new Or(left.updateInnermostFormula(atom), right);
             } else {
                 return new Or(left, right.updateInnermostFormula(atom));
+            }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new Or(this.left.normalForm(true), this.right.normalForm(true));
+            } else {
+                return new And(this.left.normalForm(false), this.right.normalForm(false));
             }
         }
     }
@@ -361,8 +414,8 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Implies transl(boolean v) {
-            return new Implies(left.transl(v), right.transl(v));
+        public Implies transl(boolean v, boolean check) {
+            return new Implies(left.transl(v, check), right.transl(v, check));
         }
 
         @Override
@@ -395,6 +448,11 @@ public abstract class ATL implements Cloneable {
             } else {
                 return new Implies(left, right.updateInnermostFormula(atom));
             }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            return new Or(new Not(this.left), this.right).normalForm(v);
         }
     }
 
@@ -429,11 +487,11 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public ATL transl(boolean v) {
+        public ATL transl(boolean v, boolean check) {
             if(v) {
-                return new Eventually(subFormula.transl(true));
+                return new Eventually(subFormula.transl(true, check));
             } else {
-                return new Globally(subFormula.transl(false));
+                return new Globally(subFormula.transl(false, check));
             }
 
         }
@@ -446,8 +504,8 @@ public abstract class ATL implements Cloneable {
         @Override
         public Set<ATL> getClosure() {
             Set<ATL> aux = subFormula.getClosure();
-            aux.add(this);
-            aux.add(new ATL.Not(this));
+            aux.add(new Until(new Atom("true"), this.subFormula));
+            aux.add(new ATL.Not(new Until(new Atom("true"), this.subFormula)));
             return aux;
         }
 
@@ -459,6 +517,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public Eventually updateInnermostFormula(String atom) {
             return new Eventually(subFormula.updateInnermostFormula(atom));
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            return new Until(new Atom("true"), this.subFormula).normalForm(v);
         }
     }
 
@@ -493,11 +556,11 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public ATL transl(boolean v) {
+        public ATL transl(boolean v, boolean check) {
             if(v) {
-                return new Globally(subFormula.transl(true));
+                return new Globally(subFormula.transl(true, check));
             } else {
-                return new Eventually(subFormula.transl(false));
+                return new Eventually(subFormula.transl(false, check));
             }
         }
 
@@ -509,8 +572,8 @@ public abstract class ATL implements Cloneable {
         @Override
         public Set<ATL> getClosure() {
             Set<ATL> aux = subFormula.getClosure();
-            aux.add(this);
-            aux.add(new ATL.Not(this));
+            aux.add(new ATL.Release(new Atom("false"), this.subFormula));
+            aux.add(new Not(new ATL.Release(new Atom("false"), this.subFormula)));
             return aux;
         }
 
@@ -522,6 +585,11 @@ public abstract class ATL implements Cloneable {
         @Override
         public Globally updateInnermostFormula(String atom) {
             return new Globally(subFormula.updateInnermostFormula(atom));
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            return new Release(new Atom("false"), this.subFormula).normalForm(v);
         }
     }
 
@@ -569,9 +637,9 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public ATL transl(boolean v) {
+        public ATL transl(boolean v, boolean check) {
 //            return v ? new Until(left.transl(true), right.transl(true)) : new Release(left.transl(false), right.transl(false));
-            return v ? new Until(left.transl(true), right.transl(true)) : new Or(new Until(right.transl(false), new ATL.And(left.transl(false), right.transl(false))), new Globally(right.transl(false)));
+            return v ? new Until(left.transl(true, check), right.transl(true, check)) : new Or(new Until(right.transl(false, check), new ATL.And(left.transl(false, check), right.transl(false))), new Globally(right.transl(false)));
         }
 
         @Override
@@ -603,6 +671,15 @@ public abstract class ATL implements Cloneable {
                 return new Until(left.updateInnermostFormula(atom), right);
             } else {
                 return new Until(left, right.updateInnermostFormula(atom));
+            }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new Until(this.left.normalForm(true), this.right.normalForm(true));
+            } else {
+                return new Release(this.left.normalForm(false), this.right.normalForm(false));
             }
         }
     }
@@ -652,8 +729,8 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public ATL transl(boolean v) {
-            return v ? new Release(left.transl(true), right.transl(true)) : new Until(left.transl(false), right.transl(false));
+        public ATL transl(boolean v, boolean check) {
+            return v ? new Release(left.transl(true, check), right.transl(true, check)) : new Until(left.transl(false, check), right.transl(false, check));
         }
 
         @Override
@@ -687,6 +764,15 @@ public abstract class ATL implements Cloneable {
                 return new Release(left, right.updateInnermostFormula(atom));
             }
         }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new Release(this.left.normalForm(true), this.right.normalForm(true));
+            } else {
+                return new Until(this.left.normalForm(false), this.right.normalForm(false));
+            }
+        }
     }
 
     public static class Not extends ATL {
@@ -698,7 +784,7 @@ public abstract class ATL implements Cloneable {
 
         @Override
         public String toString() {
-            return "not(" + subFormula.toString() + ")";
+            return "!(" + subFormula.toString() + ")";
         }
 
         public ATL getSubFormula() {
@@ -720,8 +806,8 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public ATL transl(boolean v) {
-            return subFormula.transl(!v);
+        public ATL transl(boolean v, boolean check) {
+            return subFormula.transl(!v, check);
         }
 
         @Override
@@ -746,13 +832,18 @@ public abstract class ATL implements Cloneable {
         public Not updateInnermostFormula(String atom) {
             return new Not(subFormula.updateInnermostFormula(atom));
         }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            return this.subFormula.normalForm(!v);
+        }
     }
 
-    public static class Strategic extends ATL {
+    public static class Existential extends ATL {
         private String group;
         private ATL subFormula;
 
-        public Strategic(String group, ATL subFormula) {
+        public Existential(String group, ATL subFormula) {
             this.group = group;
             this.subFormula = subFormula;
         }
@@ -781,13 +872,18 @@ public abstract class ATL implements Cloneable {
         }
 
         @Override
-        public Strategic transl(boolean v) {
-            return new Strategic(group, subFormula.transl(v));
+        public ATL transl(boolean v, boolean check) {
+            if(v) {
+                return new Existential(group, subFormula.transl(true, check));
+            } else {
+//                return new Universal(group, subFormula.transl(false, check));
+                return new Not(new Existential(group, subFormula.transl(true, true)));
+            }
         }
 
         @Override
-        public Strategic clone() {
-            return new Strategic(group, subFormula.clone());
+        public Existential clone() {
+            return new Existential(group, subFormula.clone());
         }
 
         @Override
@@ -809,7 +905,96 @@ public abstract class ATL implements Cloneable {
             if(subFormula.innermostFormula() == null) {
                 return new Atom(atom);
             } else {
-                return new Strategic(group, subFormula.updateInnermostFormula(atom));
+                return new Existential(group, subFormula.updateInnermostFormula(atom));
+            }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new Existential(this.group, this.subFormula.normalForm(true));
+            } else {
+                return new Universal(this.group, this.subFormula.normalForm(false));
+            }
+        }
+    }
+
+    public static class Universal extends ATL {
+        private String group;
+        private ATL subFormula;
+
+        public Universal(String group, ATL subFormula) {
+            this.group = group;
+            this.subFormula = subFormula;
+        }
+
+        @Override
+        public String toString() { return "!<" + group + ">!" + this.subFormula.toString(); }//(new Not(subFormula).normalForm(true)).toString(); }
+
+        public ATL getSubFormula() {
+            return subFormula;
+        }
+
+        public void setSubFormula(ATL subFormula) {
+            this.subFormula = subFormula;
+        }
+
+        public String getGroup() { return group; }
+
+        @Override
+        public boolean isLTL() {
+            return false;
+        }
+
+        @Override
+        public List<String> getTerms() {
+            return subFormula.getTerms();
+        }
+
+        @Override
+        public ATL transl(boolean v, boolean check) {
+            if(v) {
+//                return new Universal(group, subFormula.transl(true, check));
+                return new Not(new Existential(group, subFormula.transl(true, true)));
+            } else {
+                return new Existential(group, subFormula.transl(false, check));
+            }
+        }
+
+        @Override
+        public Universal clone() {
+            return new Universal(group, subFormula.clone());
+        }
+
+        @Override
+        public Set<ATL> getClosure() {
+            return subFormula.getClosure();
+        }
+
+        @Override
+        public ATL innermostFormula() {
+            if(subFormula.innermostFormula() == null) {
+                return this;
+            } else {
+                return subFormula.innermostFormula();
+            }
+        }
+
+        @Override
+        public ATL updateInnermostFormula(String atom) {
+            if(subFormula.innermostFormula() == null) {
+                return new Atom(atom);
+            } else {
+                return new Universal(group, subFormula.updateInnermostFormula(atom));
+            }
+        }
+
+        @Override
+        public ATL normalForm(boolean v) {
+            if(v) {
+                return new Universal(this.group, this.subFormula.normalForm(true));
+            } else {
+                return new Existential(this.group, this.subFormula.normalForm(false));
             }
         }
     }

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class State extends JsonObject implements Comparable<State>{
+public class State extends JsonObject implements Comparable<State>, Cloneable {
 
 	@SerializedName("name")
 	@Expose
@@ -86,5 +86,19 @@ public class State extends JsonObject implements Comparable<State>{
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	@Override
+	public State clone() {
+		State state;
+		try {
+			state = (State) super.clone();
+		}
+		catch (CloneNotSupportedException ex) {
+			throw new RuntimeException("Superclass messed up", ex);
+		}
+		state.labels = new ArrayList<>(this.labels);
+		state.falseLabels = new ArrayList<>(this.falseLabels);
+		return state;
 	}
 }

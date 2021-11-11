@@ -12,7 +12,8 @@ atlExpr : ('!' | 'not') child=atlExpr                                  # Negatio
      | left=atlExpr ('||' | 'or') right=atlExpr                        # Disjunction
      | left=atlExpr ('->' | 'implies') right=atlExpr                   # Implies
      // strategic operators
-     | '<' group=ATOM '>' child=atlExpr                                # Strategic
+     | '<' group=ATOM '>' child=atlExpr                                # Existential
+     | '[' group=ATOM ']' child=atlExpr                                # Universal
      | '(' atlExpr ')'                                                 # Grouping
      | child=atomExpr                                                  # Evaluation
      ;

@@ -24,14 +24,7 @@ public class ATLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements AT
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDisjunction(ATLParser.DisjunctionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitImplies(ATLParser.ImpliesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitUniversal(ATLParser.UniversalContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -45,7 +38,21 @@ public class ATLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements AT
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStrategic(ATLParser.StrategicContext ctx) { return visitChildren(ctx); }
+	@Override public T visitGrouping(ATLParser.GroupingContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDisjunction(ATLParser.DisjunctionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitImplies(ATLParser.ImpliesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -73,7 +80,7 @@ public class ATLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements AT
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGrouping(ATLParser.GroupingContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExistential(ATLParser.ExistentialContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

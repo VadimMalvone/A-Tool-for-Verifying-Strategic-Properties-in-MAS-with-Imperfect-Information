@@ -50,26 +50,55 @@ public class StateCluster extends State {
 	}
 
 	public void setName() {
-		setName(childStates.stream().map(State::getName).collect(Collectors.joining("_")));
+		setName(childStates.stream().map(State::getName).collect(Collectors.joining("")));
 	}
-	
+
 	private void setLabels() {
-		List<String> labels = new ArrayList<>();
-		List<String> allLabels = new ArrayList<>();
+		List<String> posLabels = new ArrayList<>();
+		List<String> negLabels = new ArrayList<>();
 		if (!childStates.isEmpty()) {
-			labels.addAll(childStates.get(0).getLabels());
-			allLabels.addAll(childStates.get(0).getLabels());
-			for (int i = 1; i < childStates.size() && !labels.isEmpty(); i++) {
-				labels = ListUtils.intersection(labels, childStates.get(i).getLabels());
-				allLabels = ListUtils.union(allLabels, childStates.get(i).getLabels());
+			List<String> labels =
+					childStates.get(0).getLabels()
+					.stream().map(l -> l.substring(0, l.length()-3)).collect(Collectors.toList());
+
+			posLabels.addAll(childStates.get(0).getLabels());
+//			negLabels.addAll(childStates.get(0).getFalseLabels());
+			for (int i = 1; i < childStates.size(); i++) {
+				posLabels = ListUtils.intersection(posLabels, childStates.get(i).getLabels());
+//				negLabels = ListUtils.intersection(negLabels, childStates.get(i).getFalseLabels());
+			}
+			for(String l : labels) {
+				if(posLabels.contains(l + "_tt")) {
+					negLabels.add(l + "_ff");
+				} else if(posLabels.contains(l + "_ff")) {
+					negLabels.add(l + "_tt");
+				}
+				else {
+					posLabels.add(l + "_uu");
+				}
 			}
 		}
-		List<String> res = new ArrayList<>();
-		res.addAll(labels.stream().filter(l -> l.endsWith("_tt")).distinct().collect(Collectors.toList()));
-		res.addAll(ListUtils.subtract(allLabels, labels.stream().filter(l -> l.endsWith("_tt")).map(l -> l.replace("_tt", "_ff")).collect(Collectors.toList())).stream().filter(l -> l.endsWith("_ff")).distinct().collect(Collectors.toList()));
-		setLabels(res);
-		setFalseLabels(res.stream().map(l -> l.endsWith("_tt") ? l.replace("_tt", "_ff") : l.replace("_ff", "_tt")).collect(Collectors.toList()));
+		setLabels(posLabels);
+		setFalseLabels(negLabels);
 	}
+	
+//	private void setLabels() {
+//		List<String> labels = new ArrayList<>();
+//		List<String> allLabels = new ArrayList<>();
+//		if (!childStates.isEmpty()) {
+//			labels.addAll(childStates.get(0).getLabels());
+//			allLabels.addAll(childStates.get(0).getLabels());
+//			for (int i = 1; i < childStates.size() && !labels.isEmpty(); i++) {
+//				labels = ListUtils.intersection(labels, childStates.get(i).getLabels());
+//				allLabels = ListUtils.union(allLabels, childStates.get(i).getLabels());
+//			}
+//		}
+//		List<String> res = new ArrayList<>();
+//		res.addAll(labels.stream().filter(l -> l.endsWith("_tt")).distinct().collect(Collectors.toList()));
+//		res.addAll(ListUtils.subtract(allLabels, labels.stream().filter(l -> l.endsWith("_tt")).map(l -> l.replace("_tt", "_ff")).collect(Collectors.toList())).stream().filter(l -> l.endsWith("_ff")).distinct().collect(Collectors.toList()));
+//		setLabels(res);
+//		setFalseLabels(res.stream().map(l -> l.endsWith("_tt") ? l.replace("_tt", "_ff") : l.replace("_ff", "_tt")).collect(Collectors.toList()));
+//	}
 	
 	public State toState() {
 		State state = new State(getName(), isInitial(), getLabels().toArray(new String[getLabels().size()]));
@@ -109,7 +138,7 @@ public class StateCluster extends State {
 		// to be checked (here, we are assuming a simple ATL property with only one strategic operator. What to do with formulae like: <A>F<B>Xp?)
 		Group group = new Group();
 		for(Group g : atlModel.getGroups()) {
-			if(g.getName().equals(((ATL.Strategic)(atlModel.getATL())).getGroup())) {
+			if(g.getName().equals(((ATL.Existential)(atlModel.getATL())).getGroup())) {
 				group = g;
 				break;
 			}
@@ -205,5 +234,17 @@ public class StateCluster extends State {
 	public List<State> getChildStates() {
 		return childStates;
 	}
+
+	@Override
+	public StateCluster clone() {
+		StateCluster state;
+		state = (StateCluster) super.clone();
+		state.childStates = new ArrayList<>();
+		for(State s : this.childStates) {
+			state.childStates.add(s.clone());
+		}
+		return state;
+	}
+
 	
 }

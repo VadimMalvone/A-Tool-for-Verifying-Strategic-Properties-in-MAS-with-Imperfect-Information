@@ -86,7 +86,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 			ATLLexer lexer = new ATLLexer(codePointCharStream);
 			ATLParser parser = new ATLParser(new CommonTokenStream(lexer));
 			ParseTree tree = parser.atlExpr();
-			ClosureLTLVisitor visitor = new ClosureLTLVisitor();
+			ATLVisitorImpl visitor = new ATLVisitorImpl();
 			atl = visitor.visit(tree);
 		}
 		return atl;
@@ -295,40 +295,45 @@ public class AtlModel extends JsonObject implements Cloneable {
 
 	public Automaton toAutomaton() {
 		Set<String> states = this.states.stream().map(State::getName).collect(Collectors.toSet());
-		Set<String> initialStates = new HashSet<>(); // this.states.stream().filter(State::isInitial).map(State::getName).collect(Collectors.toSet());
-		String init = "init";
-		while(states.contains(init)) {
-			init = init + "_init";
-		}
-		states.add(init);
-		initialStates.add(init);
+		Set<String> initialStates = this.states.stream().filter(State::isInitial).map(State::getName).collect(Collectors.toSet());
+//		String init = "init";
+//		while(states.contains(init)) {
+//			init = init + "_init";
+//		}
+//		states.add(init);
+//		initialStates.add(init);
 		Map<String, Map<Set<ATL>, Set<String>>> transitions = new HashMap<>();
 		for(State s : this.states) {
+			transitions.put(s.getName(), new HashMap<>());
+		}
+		for(State from : this.states) {
 			Set<ATL> event = new HashSet<>();
-			for(String l : s.getLabels()) {
-				event.add(new ATL.Atom(l));
-			}
-			for(String l : s.getFalseLabels()) {
-				event.add(new ATL.Not(new ATL.Atom(l)));
-			}
-			for(String from : this.transitions.stream().filter(t -> t.getToState().equals(s.getName())).map(Transition::getFromState).collect(Collectors.toSet())) {
-				if(!transitions.containsKey(from)) {
-					transitions.put(from, new HashMap<>());
+			for(String l : from.getLabels()) {
+				if(!l.endsWith("_uu")) {
+					event.add(new ATL.Atom(l));
 				}
-				if(!transitions.get(from).containsKey(event)) {
-					transitions.get(from).put(event, new HashSet<>());
-				}
-				transitions.get(from).get(event).add(s.getName());
 			}
-			if(s.isInitial()) {
-				if(!transitions.containsKey(init)) {
-					transitions.put(init, new HashMap<>());
+//			for(String l : s.getFalseLabels()) {
+//				event.add(new ATL.Not(new ATL.Atom(l)));
+//			}
+			for(String to : this.transitions.stream().filter(t -> t.getFromState().equals(from.getName())).map(Transition::getToState).collect(Collectors.toSet())) {
+				if(!transitions.containsKey(from.getName())) {
+					transitions.put(from.getName(), new HashMap<>());
 				}
-				if(!transitions.get(init).containsKey(event)) {
-					transitions.get(init).put(event, new HashSet<>());
+				if(!transitions.get(from.getName()).containsKey(event)) {
+					transitions.get(from.getName()).put(event, new HashSet<>());
 				}
-				transitions.get(init).get(event).add(s.getName());
+				transitions.get(from.getName()).get(event).add(to);
 			}
+//			if(s.isInitial()) {
+//				if(!transitions.containsKey(init)) {
+//					transitions.put(init, new HashMap<>());
+//				}
+//				if(!transitions.get(init).containsKey(event)) {
+//					transitions.get(init).put(event, new HashSet<>());
+//				}
+//				transitions.get(init).get(event).add(s.getName());
+//			}
 		}
 		Set<Set<String>> finalStates = new HashSet<>();
 		finalStates.add(this.states.stream().map(State::getName).collect(Collectors.toSet()));
@@ -344,7 +349,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 			AtlModel mustAtlModel = this.clone();
 			mustAtlModel.setStates(mustStateClusters);
 			mustAtlModel.setTransitions(mustTransitions);
-			mustAtlModel.setATL(this.getATL().transl(true));
+//			mustAtlModel.setATL(this.getATL().transl(true));
 			return mustAtlModel;
 		} else {
 			List<StateCluster> mayStateClusters = AbstractionUtils.getStateClusters(this);
@@ -352,7 +357,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 			AtlModel mayAtlModel = this.clone();
 			mayAtlModel.setStates(mayStateClusters);
 			mayAtlModel.setTransitions(mayTransitions);
-			mayAtlModel.setATL(this.getATL().transl(false));
+//			mayAtlModel.setATL(this.getATL().transl(false));
 			return mayAtlModel;
 		}
 	}
@@ -372,30 +377,85 @@ public class AtlModel extends JsonObject implements Cloneable {
 		}
 	}
 
-	public static Automaton.Outcome modelCheck(AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
-		String mustMcmasProgram = AbstractionUtils.generateMCMASProgram(mustAtlModel, false);
-		String fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
-		while (Files.exists(Paths.get(fileName))) {
-			fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
-		}
-		Files.write(Paths.get(fileName), mustMcmasProgram.getBytes());
-		String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
-		if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
-			return Automaton.Outcome.True;
+	public static Automaton.Outcome modelCheck(ATL property, AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
+		Automaton.Outcome result;
+		if(auxiliary1(property.transl(true), mustAtlModel, mayAtlModel)) {
+			result = Automaton.Outcome.True;
+		} else if(auxiliary1(property.transl(false), mustAtlModel, mayAtlModel)) {
+			result = Automaton.Outcome.False;
 		} else {
-			String mayMcmasProgram = AbstractionUtils.generateMCMASProgram(mayAtlModel, true);
-			fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
-			while (Files.exists(Paths.get(fileName))) {
-				fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
+			result = Automaton.Outcome.Unknown;
+		}
+		return result;
+	}
+
+	private static boolean auxiliary1(ATL property, AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
+		String atom = "";
+		int i = 0;
+		while(!(property instanceof ATL.Atom || (property instanceof ATL.Not && ((ATL.Not) property).getSubFormula() instanceof ATL.Atom))) {
+			ATL property1 = property.innermostFormula();
+			atom = "auxiliary_atom_" + i++;
+			if(property1 instanceof ATL.Existential) {
+				auxiliary2(property1, atom, mustAtlModel, mayAtlModel);
+			} else {
+				auxiliary2(property1, atom, mayAtlModel, mustAtlModel);
 			}
-			Files.write(Paths.get(fileName), mayMcmasProgram.getBytes());
-			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(fileName);
-			if (!AbstractionUtils.getMcmasResult(mcmasOutputMayAtlModel)) {
-				return Automaton.Outcome.False;
+			property = property.updateInnermostFormula(atom);
+		}
+		String finalAtom = atom;
+		boolean res;
+		if(mustAtlModel.states.stream().anyMatch(s -> s.isInitial() && s.getLabels().contains(finalAtom))) {
+			res = property instanceof ATL.Atom;
+		} else {
+			res = !(property instanceof ATL.Atom);
+		}
+		mustAtlModel.getStates().forEach(s -> s.setLabels(s.getLabels().stream().filter(l -> !l.startsWith("auxiliary_atom_")).collect(Collectors.toList())));
+		mayAtlModel.getStates().forEach(s -> s.setLabels(s.getLabels().stream().filter(l -> !l.startsWith("auxiliary_atom_")).collect(Collectors.toList())));
+		return res;
+	}
+
+	private static void auxiliary2(ATL property, String atom, AtlModel model1, AtlModel model2) throws IOException {
+		State initialState = model1.getStates().stream().filter(State::isInitial).findFirst().get();
+		for(State state : model1.getStates()) {
+			model1.getStates().forEach(s -> s.setInitial(s.getName().equals(state.getName())));
+			model1.setATL(property);
+			String mcmasProgram = AbstractionUtils.generateMCMASProgram(model1, false);
+			String fileName = "/tmp/model.ispl";
+			Files.write(Paths.get(fileName), mcmasProgram.getBytes());
+			String mcmasOutputAtlModel = AbstractionUtils.modelCheck(fileName);
+			if(AbstractionUtils.getMcmasResult(mcmasOutputAtlModel) && !state.getLabels().contains(atom)) {
+				state.getLabels().add(atom);
+				model2.getState(state.getName()).getLabels().add(atom);
 			}
 		}
-		return Automaton.Outcome.Unknown;
+		model1.getStates().forEach(s -> s.setInitial(s.getName().equals(initialState.getName())));
 	}
+
+
+//	public static Automaton.Outcome modelCheck(AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
+//		String mustMcmasProgram = AbstractionUtils.generateMCMASProgram(mustAtlModel, false);
+//		String fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
+//		while (Files.exists(Paths.get(fileName))) {
+//			fileName = "/tmp/must" + System.currentTimeMillis() + ".ispl";
+//		}
+//		Files.write(Paths.get(fileName), mustMcmasProgram.getBytes());
+//		String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
+//		if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
+//			return Automaton.Outcome.True;
+//		} else {
+//			String mayMcmasProgram = AbstractionUtils.generateMCMASProgram(mayAtlModel, true);
+//			fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
+//			while (Files.exists(Paths.get(fileName))) {
+//				fileName = "/tmp/may" + System.currentTimeMillis() + ".ispl";
+//			}
+//			Files.write(Paths.get(fileName), mayMcmasProgram.getBytes());
+//			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(fileName);
+//			if (AbstractionUtils.getMcmasResult(mcmasOutputMayAtlModel)) {
+//				return Automaton.Outcome.False;
+//			}
+//		}
+//		return Automaton.Outcome.Unknown;
+//	}
 
 	public void updateModel(String atom_tt, String atom_ff, List<? extends State> states) {
 		for(State s : this.states) {

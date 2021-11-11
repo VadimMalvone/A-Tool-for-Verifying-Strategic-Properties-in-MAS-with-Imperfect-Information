@@ -5,24 +5,24 @@ import org.checkerframework.checker.units.qual.A;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
-    private Set<ATL> closure = new HashSet<>();
+public class ATLVisitorImpl extends ATLBaseVisitor<ATL> {
+//    private Set<ATL> closure = new HashSet<>();
 
-    public ClosureLTLVisitor() {
+    public ATLVisitorImpl() {
         //closure.add(new LTL.Atom("true"));
     }
 
-    public Set<ATL> getClosure() {
-        return closure;
-    }
+//    public Set<ATL> getClosure() {
+//        return closure;
+//    }
 
     @Override
     public ATL visitImplies(ATLParser.ImpliesContext ctx) {
         ATL.Implies implies = new ATL.Implies(visit(ctx.left), visit(ctx.right));
         ATL.Not not = new ATL.Not(implies);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(implies);
-        closure.add(not);
+//        closure.add(implies);
+//        closure.add(not);
 //        closure.add(notNot);
         return implies;
     }
@@ -31,8 +31,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
     public ATL visitNegation(ATLParser.NegationContext ctx) {
         ATL.Not not = new ATL.Not(visit(ctx.getChild(1)));
         ATL.Not notNot = new ATL.Not(not);
-        closure.add(not);
-        closure.add(notNot);
+//        closure.add(not);
+//        closure.add(notNot);
         return not;
     }
 
@@ -41,8 +41,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Next next = new ATL.Next(visit(ctx.getChild(1)));
         ATL.Not not = new ATL.Not(next);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(next);
-        closure.add(not);
+//        closure.add(next);
+//        closure.add(not);
 //        closure.add(notNot);
         return next;
     }
@@ -53,8 +53,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Eventually eventually = new ATL.Eventually(subFormula);
 //        ATL.Not not = new ATL.Not(eventually);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(new ATL.Until(new ATL.Atom("true"), subFormula));
-        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), subFormula)));
+//        closure.add(new ATL.Until(new ATL.Atom("true"), subFormula));
+//        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), subFormula)));
 //        closure.add(notNot);
         return eventually;
     }
@@ -64,8 +64,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.And and = new ATL.And(visit(ctx.left), visit(ctx.right));
         ATL.Not not = new ATL.Not(and);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(and);
-        closure.add(not);
+//        closure.add(and);
+//        closure.add(not);
 //        closure.add(notNot);
         return and;
     }
@@ -76,8 +76,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Globally globally = new ATL.Globally(subFormula);
 //        ATL.Not not = new ATL.Not(globally);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula))));
-        closure.add(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula)));
+//        closure.add(new ATL.Not(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula))));
+//        closure.add(new ATL.Until(new ATL.Atom("true"), new ATL.Not(subFormula)));
 //        closure.add(notNot);
         return globally;
     }
@@ -87,8 +87,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Until until = new ATL.Until(visit(ctx.left), visit(ctx.right));
         ATL.Not not = new ATL.Not(until);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(until);
-        closure.add(not);
+//        closure.add(until);
+//        closure.add(not);
 //        closure.add(notNot);
         return until;
     }
@@ -98,8 +98,8 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Release release = new ATL.Release(visit(ctx.left), visit(ctx.right));
         ATL.Not not = new ATL.Not(release);
 //        LTL.Not notNot = new LTL.Not(not);
-        closure.add(release);
-        closure.add(not);
+//        closure.add(release);
+//        closure.add(not);
 //        closure.add(notNot);
         return release;
     }
@@ -109,15 +109,20 @@ public class ClosureLTLVisitor extends ATLBaseVisitor<ATL> {
         ATL.Atom atom = new ATL.Atom(ctx.getText());
         ATL.Not notAtom = new ATL.Not(atom);
 //        LTL.Not notNotAtom = new LTL.Not(notAtom);
-        closure.add(atom);
-        closure.add(notAtom);
+//        closure.add(atom);
+//        closure.add(notAtom);
 //        closure.add(notNotAtom);
         return atom;
     }
 
     @Override
-    public ATL visitStrategic(ATLParser.StrategicContext ctx) {
-        return new ATL.Strategic(ctx.group.getText(), visit(ctx.getChild(3)));
+    public ATL visitExistential(ATLParser.ExistentialContext ctx) {
+        return new ATL.Existential(ctx.group.getText(), visit(ctx.getChild(3)));
+    }
+
+    @Override
+    public ATL visitUniversal(ATLParser.UniversalContext ctx) {
+        return new ATL.Universal(ctx.group.getText(), visit(ctx.getChild(3)));
     }
 
     @Override

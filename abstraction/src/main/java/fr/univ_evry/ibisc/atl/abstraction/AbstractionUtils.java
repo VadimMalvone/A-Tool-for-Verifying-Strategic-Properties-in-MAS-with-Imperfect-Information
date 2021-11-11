@@ -3,13 +3,9 @@ package fr.univ_evry.ibisc.atl.abstraction;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -31,7 +27,7 @@ public class AbstractionUtils {
 	public static List<StateCluster> getStateClusters(AtlModel atlModel) {
 		List<StateCluster> stateClusters = new ArrayList<>();
 		for (State state : atlModel.getStates()) {
-			stateClusters.add(state.toStateCluster());
+			stateClusters.add(state.clone().toStateCluster());
 		}
 
 		for (Agent agent : atlModel.getAgents()) {
@@ -148,6 +144,7 @@ public class AbstractionUtils {
 			s.setLabels(sLabels);
 			s.setFalseLabels(sLabels.stream().map(l -> l.endsWith("_tt") ? l.replace("_tt", "_ff") : l.replace("_ff", "_tt")).collect(Collectors.toList()));
 		}
+//		atlModel.setATL(atlModel.getATL().normalForm());
 	}
 		
 	private static void validateTransitions(AtlModel atlModel) throws Exception {
@@ -267,15 +264,35 @@ public class AbstractionUtils {
 		for (State state: atlModel.getStates()) {
 			stringBuilder.append("\t").append("\t").append(state.getName()).append(" : boolean;").append(System.lineSeparator());
 			for (String label: state.getLabels()) {
-				if(!alreadyAddedLabels.contains(label)) {
-					stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
-					alreadyAddedLabels.add(label);
+				if(label.endsWith("_tt") || label.endsWith("_ff")) {
+					label = label.substring(0, label.length() - 3);
+					if (!alreadyAddedLabels.contains(label)) {
+						stringBuilder.append("\t").append("\t").append(label).append("_tt").append(" : boolean;").append(System.lineSeparator());
+						stringBuilder.append("\t").append("\t").append(label).append("_ff").append(" : boolean;").append(System.lineSeparator());
+						stringBuilder.append("\t").append("\t").append(label).append("_uu").append(" : boolean;").append(System.lineSeparator());
+						alreadyAddedLabels.add(label);
+					}
+				} else {
+					if (!alreadyAddedLabels.contains(label)) {
+						stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
+						alreadyAddedLabels.add(label);
+					}
 				}
 			}
 			for (String label: state.getFalseLabels()) {
-				if(!alreadyAddedLabels.contains(label)) {
-					stringBuilder.append("\t").append("\t").append(label).append(" : boolean;").append(System.lineSeparator());
-					alreadyAddedLabels.add(label);
+				if(!label.contains("atom")) {
+					label = label.substring(0, label.length() - 3);
+					if(label.endsWith("_tt") || label.endsWith("_ff")) {
+						stringBuilder.append("\t").append("\t").append(label).append("_tt").append(" : boolean;").append(System.lineSeparator());
+						stringBuilder.append("\t").append("\t").append(label).append("_ff").append(" : boolean;").append(System.lineSeparator());
+						stringBuilder.append("\t").append("\t").append(label).append("_uu").append(" : boolean;").append(System.lineSeparator());
+						alreadyAddedLabels.add(label);
+					}
+				} else {
+					if (!alreadyAddedLabels.contains(label)) {
+						stringBuilder.append("\t").append("\t").append(label).append("_tt").append(" : boolean;").append(System.lineSeparator());
+						alreadyAddedLabels.add(label);
+					}
 				}
 			}
 		}
@@ -694,6 +711,7 @@ public class AbstractionUtils {
 	}
 
 	public static boolean getMcmasResult(String mcmasOutput) {
+		if(mcmasOutput.contains("error")) throw new RuntimeException("MCMAS error");
 		return  (mcmasOutput.contains("is TRUE in the model"));
 	}
 
@@ -719,21 +737,32 @@ public class AbstractionUtils {
 					abstractModelMust.getStates().remove(failureState);
 					abstractModelMay.getTransitions().removeIf(t -> t.getFromState().equals(failureState.getName()) || t.getToState().equals(failureState.getName()));
 					abstractModelMust.getTransitions().removeIf(t -> t.getFromState().equals(failureState.getName()) || t.getToState().equals(failureState.getName()));
-					StateCluster v = new StateCluster(s1);
-					StateCluster w = new StateCluster(s2);
-					List<State> auxS = new ArrayList<>(abstractModelMay.getStates());
-					auxS.add(v);
-					auxS.add(w);
-					abstractModelMay.setStates(auxS);
-					abstractModelMust.setStates(auxS);
+					StateCluster v = new StateCluster(s1.clone());
+					StateCluster w = new StateCluster(s2.clone());
+					v.setInitial(failureState.isInitial());
+					w.setInitial(failureState.isInitial());
+					List<State> auxS1 = new ArrayList<>();
+					for(State s : abstractModelMay.getStates()) {
+						auxS1.add(s.clone());
+					}
+					List<State> auxS2 = new ArrayList<>();
+					for(State s : abstractModelMust.getStates()) {
+						auxS2.add(s.clone());
+					}
 					for(State t : failureState.getChildStates()) {
 						if(t.equals(s1) || t.equals(s2)) continue;
 						if(m.get(s1).get(t)) {
-							w.addChildState(t);
+							w.addChildState(t.clone());
 						} else {
-							v.addChildState(t);
+							v.addChildState(t.clone());
 						}
 					}
+					auxS1.add(v.clone());
+					auxS2.add(v.clone());
+					auxS1.add(w.clone());
+					auxS2.add(w.clone());
+					abstractModelMay.setStates(auxS1);
+					abstractModelMust.setStates(auxS2);
 //					for(State sAux : abstractModelMay.getStates()) {
 //						StateCluster s = (StateCluster) sAux;
 //						createTransition(v, abstractModelMay.getTransitions(), s,
@@ -769,6 +798,11 @@ public class AbstractionUtils {
 					}
 					abstractModelMay.setStateMap(null);
 					abstractModelMust.setStateMap(null);
+					if(new Random().nextBoolean()) {
+						failureState.setName(v.getName());
+					} else {
+						failureState.setName(w.getName());
+					}
 					return true;
 				}
 			}
@@ -809,7 +843,11 @@ public class AbstractionUtils {
 								// to be checked (here, we are assuming a simple ATL property with only one strategic operator. What to do with formulae like: <A>F<B>Xp?)
 								Group group = new Group();
 								for(Group g : abstractModel.getGroups()) {
-									if(g.getName().equals(((ATL.Strategic)(abstractModel.getATL())).getGroup())) {
+									if(abstractModel.getATL() instanceof ATL.Existential && g.getName().equals(((ATL.Existential)(abstractModel.getATL())).getGroup())) {
+										group = g;
+										break;
+									}
+									if(abstractModel.getATL() instanceof ATL.Universal && g.getName().equals(((ATL.Universal)(abstractModel.getATL())).getGroup())) {
 										group = g;
 										break;
 									}
@@ -854,6 +892,7 @@ public class AbstractionUtils {
 						if(!m.get(s1).get(t) && !m.get(s2).get(t)) {
 							m.get(s1).put(s2, false);
 							update = true;
+							break;
 						}
 					}
 				}
@@ -894,73 +933,105 @@ public class AbstractionUtils {
 		} else if(formula instanceof ATL.Not) {
 			return failureState(atlModelMust, atlModelMay, atlModel, state, ((ATL.Not) formula).getSubFormula());
 		} else if(formula instanceof ATL.And) {
-			atlModel.setATL(((ATL.And) formula).getLeft());
-			if(AtlModel.modelCheck(atlModelMust, atlModelMay) == Automaton.Outcome.Unknown) {
+//			atlModel.setATL(((ATL.And) formula).getLeft());
+			if(AtlModel.modelCheck(((ATL.And) formula).getLeft(), atlModelMust, atlModelMay) == Automaton.Outcome.Unknown) {
 				return failureState(atlModelMust, atlModelMay, atlModel, state, ((ATL.And) formula).getLeft());
 			} else {
 				return failureState(atlModelMust, atlModelMay, atlModel, state, ((ATL.And) formula).getRight());
 			}
 		} else { // strategic
-			ATL subFormula = ((ATL.Strategic)formula).getSubFormula();
+			ATL subFormula = ((ATL.Existential)formula).getSubFormula().transl(true);
 			Set<String> alphabet = new HashSet<>();
-			for(List<String> labels : atlModel.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
 				alphabet.addAll(labels);
 			}
-			Automaton automaton = new Automaton(subFormula, subFormula.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
-			Automaton product = atlModel.toAutomaton().product(automaton);
-			Automaton path = product.getPath();
-			if(path == null) {
-				return new FailureState(state, formula);
-			} else {
-				return failurePath(atlModelMust, atlModelMay, atlModel, path, subFormula);
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getFalseLabels).collect(Collectors.toList())) {
+				alphabet.addAll(labels);
 			}
+			// To be updated
+			ATL normalForm = subFormula.normalForm();
+			Automaton automaton = new Automaton(normalForm, normalForm.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
+
+//			Automaton aux =  atlModelMust.toAutomaton();
+
+			Automaton productMust = atlModelMust.toAutomaton().product(automaton);
+			Automaton productMay = atlModelMay.toAutomaton().product(automaton);
+			Automaton path = productMust.getPath();
+			if(path == null) {
+				path = productMay.getPath();
+				if(path == null) {
+					return new FailureState(state, formula);
+				} else {
+					return failurePath(atlModelMust, atlModelMay, atlModel, path, normalForm);
+				}
+			} else {
+				return failurePath(atlModelMust, atlModelMay, atlModel, path, normalForm);
+			}
+			// To be updated
 		}
 	}
 
 	public static FailureState failurePath(AtlModel atlModelMust, AtlModel atlModelMay, AtlModel atlModel, Automaton path, ATL formula) throws IOException {
 		if(formula instanceof ATL.Atom) {
 			String p1 = path.getInitialStates().stream().findFirst().get();
-			p1 = p1.substring(0, p1.indexOf("_"));
-			StateCluster state = new StateCluster(atlModel.getState(p1));
+			String p1aux = p1.substring(0, p1.indexOf("_"));
+			StateCluster state;
+			if(atlModelMust.getState(p1aux) instanceof StateCluster) {
+				state = (StateCluster) atlModelMust.getState(p1aux);
+			} else {
+				state = new StateCluster(atlModelMust.getState(p1aux));
+			}
 			return failureState(atlModelMust, atlModelMay, atlModel, state, formula);
 		} else if(formula instanceof ATL.Not) {
 			return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.Not) formula).getSubFormula());
 		} else if(formula instanceof ATL.And) {
 			Set<String> alphabet = new HashSet<>();
-			for(List<String> labels : atlModel.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+				alphabet.addAll(labels);
+			}
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getFalseLabels).collect(Collectors.toList())) {
 				alphabet.addAll(labels);
 			}
 			Automaton automaton = new Automaton(((ATL.And) formula).getLeft(), ((ATL.And) formula).getLeft().getClosure(), Automaton.Outcome.Unknown, alphabet, true);
-			Automaton product = atlModel.toAutomaton().product(automaton);
-			if(path.product(product).getPath() != null) {
+//			Automaton product = atlModel.toAutomaton().product(automaton);
+			if(path.product(automaton).getPath() != null) {
 				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.And) formula).getLeft());
 			} else {
 				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.And) formula).getRight());
 			}
 		} else if(formula instanceof ATL.Next) {
-			path.moveInitialStateof(2);
+			path.moveInitialStateof(1);
 			return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.Next) formula).getSubFormula());
 		} else if(formula instanceof ATL.Until) {
 			boolean check1 = true;
 			boolean check2 = true;
 			Set<String> alphabet = new HashSet<>();
-			for(List<String> labels : atlModel.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
 				alphabet.addAll(labels);
 			}
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getFalseLabels).collect(Collectors.toList())) {
+				alphabet.addAll(labels);
+			}
+			boolean first = true;
 			while(check1 && check2) {
+				if(!first) {
+					path.moveInitialStateof(1); // check here!
+				} else {
+					first = false;
+				}
 				Automaton automaton = new Automaton(((ATL.Until) formula).getRight(), ((ATL.Until) formula).getRight().getClosure(), Automaton.Outcome.Unknown, alphabet, true);
-				Automaton product = atlModel.toAutomaton().product(automaton);
-				path.moveInitialStateof(1);
-				if(path.product(product).getPath() != null) {
+//				Automaton product = atlModel.toAutomaton().product(automaton);
+				if(path.product(automaton).getPath() != null) {
 					check2 = false;
 				} else {
 					automaton = new Automaton(((ATL.Until) formula).getLeft(), ((ATL.Until) formula).getLeft().getClosure(), Automaton.Outcome.Unknown, alphabet, true);
-					product = atlModel.toAutomaton().product(automaton);
-					path.moveInitialStateof(1);
-					if(path.product(product).getPath() != null) {
+//					product = atlModel.toAutomaton().product(automaton);
+//					path.moveInitialStateof(1);
+					if(path.product(automaton).getPath() != null) {
 						check1 = false;
 					}
 				}
+
 			}
 			if(!check2) {
 				return failurePath(atlModelMust, atlModelMay, atlModel, path,((ATL.Until) formula).getRight());
@@ -978,49 +1049,69 @@ public class AbstractionUtils {
 		State state = atlModel.getStates().stream().filter(State::isInitial).findAny().get();
 		atlModelMust.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));
 		atlModelMay.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));
-		Automaton.Outcome outcome = AtlModel.modelCheck(atlModelMust, atlModelMay);
+		Automaton.Outcome outcome = AtlModel.modelCheck(atlModel.getATL(), atlModelMust, atlModelMay);
 		if (outcome == Automaton.Outcome.Unknown) {
 			int i = 0;
 			ATL innermostFormula = atlModel.getATL().innermostFormula();
 			while (innermostFormula != atlModel.getATL()) {
-				atlModelMust.setATL(innermostFormula);
-				atlModelMay.setATL(innermostFormula);
+//				atlModelMust.setATL(innermostFormula.transl(true));
+//				atlModelMay.setATL(innermostFormula.transl(false));
 				List<StateCluster> goodStates = new ArrayList<>();
 				for (StateCluster stateCluster : AbstractionUtils.getStateClusters(atlModel)) {
-					atlModelMust.getStates().forEach(s -> s.setInitial(s.getName().equals(stateCluster.getName())));
-					atlModelMay.getStates().forEach(s -> s.setInitial(s.getName().equals(stateCluster.getName())));
-					outcome = AtlModel.modelCheck(atlModelMust, atlModelMay);
+					if(stateCluster.getChildStates().size() == 1) {
+						continue;
+					}
+					String stateClusterName = stateCluster.getName();
+					atlModelMust.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));
+					atlModelMay.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));
+					outcome = AtlModel.modelCheck(innermostFormula, atlModelMust, atlModelMay);
 					boolean split = true;
 					while (outcome == Automaton.Outcome.Unknown && split) {
 						FailureState failureState = failureState(atlModelMust, atlModelMay, atlModel, stateCluster, innermostFormula);
+						boolean getVorW = false;
+						if(failureState.getState().getName().equals(stateCluster.getName())) {
+							getVorW = true;
+						}
 						split = refinement(atlModelMust, atlModelMay, atlModel, failureState.getState());
-						outcome = AtlModel.modelCheck(atlModelMust, atlModelMay);
+						if(getVorW) {
+							stateCluster = (StateCluster) atlModelMust.getState(failureState.getState().getName());
+						}
+						outcome = AtlModel.modelCheck(innermostFormula, atlModelMust, atlModelMay);
 					}
 					if(outcome != Automaton.Outcome.Unknown) {
 						goodStates.add(stateCluster);
 					}
 				}
 				// To-Do atom_tt e atom_ff
-				String atom_tt = "atom" + i + "_tt";
-				String atom_ff = "atom" + i + "_ff";
+				String atom = "atom" + i;
+				String atom_tt = atom + "_tt";
+				String atom_ff = atom + "_ff";
 //				atlModel.getState(state.getName()).getLabels().add(atom); // add(atom, s) from paper (removed because it seems pointless)
 				atlModelMust.updateModel(atom_tt, atom_ff, goodStates);
 				atlModelMay.updateModel(atom_tt, atom_ff, goodStates);
-				atlModel.setATL(atlModel.getATL().updateInnermostFormula(atom_tt));
+				atlModel.setATL(atlModel.getATL().updateInnermostFormula(atom));
 				i++;
 				innermostFormula = atlModel.getATL().innermostFormula();
 			}
 			atlModelMust.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));
 			atlModelMay.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));
 			StateCluster sCluster = (StateCluster) atlModelMust.getStates().stream().filter(s -> s instanceof StateCluster && ((StateCluster) s).containsChildState(state)).findAny().get();
-			atlModelMust.setATL(innermostFormula);
-			atlModelMay.setATL(innermostFormula);
-			outcome = AtlModel.modelCheck(atlModelMust, atlModelMay);
+//			atlModelMust.setATL(innermostFormula);
+//			atlModelMay.setATL(innermostFormula);
+			outcome = AtlModel.modelCheck(atlModel.getATL(), atlModelMust, atlModelMay);
 			boolean split = true;
 			while (outcome == Automaton.Outcome.Unknown && split) {
+//				sCluster = (StateCluster) atlModelMust.getStates().stream().filter(s -> s instanceof StateCluster && ((StateCluster) s).getChildStates().size()>1).findAny().get();
 				FailureState failureState = failureState(atlModelMust, atlModelMay, atlModel, sCluster, innermostFormula);
+				boolean getVorW = false;
+				if(failureState.getState().getName().equals(sCluster.getName())) {
+					getVorW = true;
+				}
 				split = refinement(atlModelMust, atlModelMay, atlModel, failureState.getState());
-				outcome = AtlModel.modelCheck(atlModelMust, atlModelMay);
+				if(getVorW) {
+					sCluster = (StateCluster) atlModelMust.getState(failureState.getState().getName());
+				}
+				outcome = AtlModel.modelCheck(atlModel.getATL(), atlModelMust, atlModelMay);
 			}
 		}
 		return outcome;
