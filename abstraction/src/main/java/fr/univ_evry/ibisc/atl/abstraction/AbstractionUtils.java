@@ -30,6 +30,8 @@ public class AbstractionUtils {
 			stateClusters.add(state.clone().toStateCluster());
 		}
 
+		//atlModel.getATL().getGroups() // the greatest coalition
+
 		for (Agent agent : atlModel.getAgents()) {
 			for (List<String> indistinguishableStateNameList : agent.getIndistinguishableStates()) {
 				for (StateCluster stateCluster : stateClusters) {
@@ -607,7 +609,7 @@ public class AbstractionUtils {
 
 			if (CollectionUtils.isNotEmpty(state.getFalseLabels())) {
 				for (int j = 0; j < state.getFalseLabels().size(); j++) {
-					String label = state.getLabels().get(j);
+					String label = state.getFalseLabels().get(j);
 					initialLabels.putIfAbsent(label, false);
 				}
 			}
@@ -711,7 +713,7 @@ public class AbstractionUtils {
 	}
 
 	public static boolean getMcmasResult(String mcmasOutput) {
-		if(mcmasOutput.contains("error")) throw new RuntimeException("MCMAS error");
+//		if(mcmasOutput.contains("error")) throw new RuntimeException("MCMAS error: \n\n" + mcmasOutput);
 		return  (mcmasOutput.contains("is TRUE in the model"));
 	}
 
@@ -1058,9 +1060,9 @@ public class AbstractionUtils {
 //				atlModelMay.setATL(innermostFormula.transl(false));
 				List<StateCluster> goodStates = new ArrayList<>();
 				for (StateCluster stateCluster : AbstractionUtils.getStateClusters(atlModel)) {
-					if(stateCluster.getChildStates().size() == 1) {
-						continue;
-					}
+//					if(stateCluster.getChildStates().size() == 1) {
+//						continue;
+//					}
 					String stateClusterName = stateCluster.getName();
 					atlModelMust.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));
 					atlModelMay.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));

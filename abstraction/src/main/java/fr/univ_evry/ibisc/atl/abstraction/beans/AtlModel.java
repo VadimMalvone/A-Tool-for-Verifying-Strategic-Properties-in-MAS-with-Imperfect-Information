@@ -460,9 +460,21 @@ public class AtlModel extends JsonObject implements Cloneable {
 	public void updateModel(String atom_tt, String atom_ff, List<? extends State> states) {
 		for(State s : this.states) {
 			if(states.stream().anyMatch(s1 -> s1.getName().equals(s.getName()))) {
+				if(s instanceof StateCluster) {
+					for(State child : ((StateCluster) s).getChildStates()) {
+						child.getLabels().add(atom_tt);
+						child.getFalseLabels().add(atom_ff);
+					}
+				}
 				s.getLabels().add(atom_tt);
 				s.getFalseLabels().add(atom_ff);
 			} else {
+				if(s instanceof StateCluster) {
+					for(State child : ((StateCluster) s).getChildStates()) {
+						child.getLabels().add(atom_ff);
+						child.getFalseLabels().add(atom_tt);
+					}
+				}
 				s.getLabels().add(atom_ff);
 				s.getFalseLabels().add(atom_tt);
 			}
