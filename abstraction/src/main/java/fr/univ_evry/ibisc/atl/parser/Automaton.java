@@ -368,6 +368,12 @@ public class Automaton {
 //                finalStates.add(finalState);
 //            }
         }
+        Automaton degeneralised = this.degeneralise();
+        this.initialStates = degeneralised.getInitialStates();
+        this.transitions = degeneralised.getTransitions();
+        this.states = degeneralised.getStates();
+        this.finalStates = degeneralised.getFinalStates();
+        this.stateLTLMap = degeneralised.getStateLTLMap();
     }
 
 //    private boolean isElementary(Set<ATL> set) {
@@ -636,7 +642,7 @@ public class Automaton {
 
     private Automaton getPathAux(MutableInt depth, String state, Map<String, Integer> visited) {
         if(visited.containsKey(state)) {
-            System.out.println("Already visited: " + state + " with depth " + depth.intValue());
+//            System.out.println("Already visited: " + state + " with depth " + depth.intValue());
             for(String finalState : finalStates.stream().findFirst().get()) {
                 if(visited.containsKey(finalState) && visited.get(finalState) >= visited.get(state)) {
                     Set<String> states = new HashSet<>();
@@ -693,5 +699,116 @@ public class Automaton {
             }
             this.initialStates = newInitialStates;
         }
+    }
+
+    public String toDot() {
+        StringBuilder stringBuilder = new StringBuilder("digraph G {").append(System.lineSeparator());
+        List<Set<String>> finals = new ArrayList<>(finalStates);
+        for(String state : states) {
+            List<String> args = new ArrayList<>();
+            if(initialStates.contains(state)) {
+                args.add("color = yellow");
+            }
+            for(int i = 0; i < finals.size(); i++) {
+                if(finals.get(i).contains(state)) {
+                    args.add("xlabel = Inf" + i);
+                }
+            }
+            if(args.isEmpty()) {
+                stringBuilder.append(state).append("\n");
+            } else {
+                stringBuilder.append(state).append("[").append(String.join(", ", args)).append("]\n");
+            }
+        }
+        for(Map.Entry<String, Map<Set<ATL>, Set<String>>> transition1 : transitions.entrySet()) {
+            String fromState = transition1.getKey();
+            for(Map.Entry<Set<ATL>, Set<String>> transition2 : transition1.getValue().entrySet()) {
+                Set<String> toStates = transition2.getValue();
+                if(toStates.size() == 1) {
+                    stringBuilder.append(fromState).append("->").append(toStates.stream().findFirst().get());
+                } else {
+                    stringBuilder.append(fromState).append("->").append("{").append(String.join(",", toStates)).append("}");
+                }
+                stringBuilder.append("[");
+                stringBuilder.append("label = \"");
+                stringBuilder.append(transition2.getKey().stream().map(Object::toString).collect(Collectors.joining(",")));
+                stringBuilder.append("\"");
+                stringBuilder.append("]\n");
+            }
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    public String toHOA() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("HOA: v1\n");
+        stringBuilder.append("States: ").append(states.size()).append("\n");
+        List<String> lStates = new ArrayList<>(states);
+        for(int i = 0; i < lStates.size(); i++) {
+            if(initialStates.contains(lStates.get(i))) {
+                stringBuilder.append("Start: ").append(i).append("\n");
+            }
+        }
+        Set<String> alphabet = new HashSet<>();
+        for(Map.Entry<String, Map<Set<ATL>, Set<String>>> transition1 : transitions.entrySet()) {
+            for (Map.Entry<Set<ATL>, Set<String>> transition2 : transition1.getValue().entrySet()) {
+                for(ATL atl : transition2.getKey()) {
+                    if(atl instanceof ATL.Atom) {
+                        alphabet.add(((ATL.Atom) atl).getAtom());
+                    } else if(atl instanceof ATL.Not) {
+                        if(((ATL.Not) atl).getSubFormula() instanceof ATL.Atom && ((ATL.Atom) ((ATL.Not) atl).getSubFormula()).getAtom().equals("_tt")) {
+                            alphabet.add(((ATL.Atom) ((ATL.Not) atl).getSubFormula()).getAtom().replace("_tt", "_ff"));
+                        } else if(((ATL.Not) atl).getSubFormula() instanceof ATL.Atom && ((ATL.Atom) ((ATL.Not) atl).getSubFormula()).getAtom().equals("_ff")) {
+                            alphabet.add(((ATL.Atom) ((ATL.Not) atl).getSubFormula()).getAtom().replace("_ff", "_tt"));
+                        }
+                    }
+                }
+            }
+        }
+        List<String> lAlphabet = new ArrayList<>(alphabet);
+        stringBuilder.append("AP: ").append(lAlphabet.size() + 1);
+        for(String label : lAlphabet) {
+            stringBuilder.append(" \"").append(label).append("\"");
+        }
+        stringBuilder.append(" \"none\"");
+        stringBuilder.append("\n");
+        stringBuilder.append("acc-name: Buchi\n");
+        stringBuilder.append("Acceptance: 1 Inf(0)\n");
+        stringBuilder.append("--BODY--\n");
+        Set<String> singleFinalStates = new HashSet<>();
+        if(finalStates.stream().findFirst().isPresent()) {
+            singleFinalStates = finalStates.stream().findFirst().get();
+        }
+        for(Map.Entry<String, Map<Set<ATL>, Set<String>>> transition1 : transitions.entrySet()) {
+            String fromState = transition1.getKey();
+            stringBuilder.append("State: ").append(lStates.indexOf(fromState));
+            if(singleFinalStates.contains(fromState)) {
+                stringBuilder.append(" {0}");
+            }
+            stringBuilder.append("\n");
+            for(Map.Entry<Set<ATL>, Set<String>> transition2 : transition1.getValue().entrySet()) {
+                Set<String> toStates = transition2.getValue();
+                for(String toState : toStates) {
+                    stringBuilder.append("[");
+                    String labels = (transition2.getKey().stream().map(l -> {
+                        int i = lAlphabet.indexOf(l.toString().replace("!", ""));
+                        if(l instanceof ATL.Not) {
+                            return "!" + i;
+                        } else {
+                            return "" + i;
+                        }
+                    }).collect(Collectors.joining("&")));
+                    if(labels.isEmpty()) {
+                        stringBuilder.append(lAlphabet.size());
+                    } else {
+                        stringBuilder.append(labels);
+                    }
+                    stringBuilder.append("] ").append(lStates.indexOf(toState)).append("\n");
+                }
+            }
+        }
+        stringBuilder.append("--END--");
+        return stringBuilder.toString();
     }
 }

@@ -19,9 +19,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 
+import static fr.univ_evry.ibisc.atl.abstraction.TestParser.good;
+
 public class AbstractionUtils {
 	
-    private static final String MODEL_JSON_FILE_NAME = "modelKR.json";
+    private static final String MODEL_JSON_FILE_NAME = "modelCards.json"; //"modelKR.json";
 	private final static Log logger = LogFactory.getLog(AbstractionUtils.class);
 
 	public static List<StateCluster> getStateClusters(AtlModel atlModel) {
@@ -1053,6 +1055,7 @@ public class AbstractionUtils {
 		atlModelMay.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));
 		Automaton.Outcome outcome = AtlModel.modelCheck(atlModel.getATL(), atlModelMust, atlModelMay);
 		if (outcome == Automaton.Outcome.Unknown) {
+			good = true;
 			int i = 0;
 			ATL innermostFormula = atlModel.getATL().innermostFormula();
 			while (innermostFormula != atlModel.getATL()) {
@@ -1060,12 +1063,15 @@ public class AbstractionUtils {
 //				atlModelMay.setATL(innermostFormula.transl(false));
 				List<StateCluster> goodStates = new ArrayList<>();
 				for (StateCluster stateCluster : AbstractionUtils.getStateClusters(atlModel)) {
-//					if(stateCluster.getChildStates().size() == 1) {
-//						continue;
-//					}
 					String stateClusterName = stateCluster.getName();
+					if(stateCluster.getChildStates().size() == 1 ||
+						atlModelMust.getStates().stream().noneMatch(s -> s.getName().equals(stateClusterName)) ||
+						atlModelMay.getStates().stream().noneMatch(s -> s.getName().equals(stateClusterName))) {
+						continue;
+					}
 					atlModelMust.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));
 					atlModelMay.getStates().forEach(s -> s.setInitial(s.getName().equals(stateClusterName)));
+
 					outcome = AtlModel.modelCheck(innermostFormula, atlModelMust, atlModelMay);
 					boolean split = true;
 					while (outcome == Automaton.Outcome.Unknown && split) {
@@ -1084,7 +1090,6 @@ public class AbstractionUtils {
 						goodStates.add(stateCluster);
 					}
 				}
-				// To-Do atom_tt e atom_ff
 				String atom = "atom" + i;
 				String atom_tt = atom + "_tt";
 				String atom_ff = atom + "_ff";

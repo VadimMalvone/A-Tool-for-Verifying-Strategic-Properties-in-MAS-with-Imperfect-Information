@@ -36,11 +36,11 @@ public class AtlModel extends JsonObject implements Cloneable {
 	@Expose
 	private String formula;
 	private ATL atl;
-	
+
 	private transient Map<String, State> stateMap;
-	
+
 	private transient Map<String, Agent> agentMap;
-	
+
 	private transient Map<String, List<Transition>> transitionMap;
 
 	private transient MultiKeyMap<String, List<List<AgentAction>>> agentActionsByStates;
@@ -95,7 +95,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 	public void setATL(ATL formula) {
 		this.atl = formula;
 	}
-	
+
 	public Map<String, State> getStateMap() {
 		if (stateMap == null) {
 			stateMap = new HashMap<>();
@@ -113,7 +113,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 	public State getState(String stateName) {
 		return getStateMap().get(stateName);
 	}
-	
+
 	public Map<String, Agent> getAgentMap() {
 		if (agentMap == null) {
 			agentMap = new HashMap<>();
@@ -123,7 +123,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 		}
 		return agentMap;
 	}
-	
+
 	public MultiKeyMap<String, List<List<AgentAction>>> getAgentActionsByStates() {
 		if (agentActionsByStates == null) {
 			agentActionsByStates = new MultiKeyMap<>();
@@ -134,10 +134,10 @@ public class AtlModel extends JsonObject implements Cloneable {
 				agentActionsByStates.get(transition.getFromState(), transition.getToState()).addAll(transition.getAgentActions());
 			}
 		}
-		
+
 		return agentActionsByStates;
 	}
-	
+
 	public Map<String, List<Transition>> getTransitionMap() {
 		if (MapUtils.isEmpty(transitionMap)) {
 			transitionMap = new HashMap<>();
@@ -148,7 +148,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 				transitionMap.get(transition.getFromState()).add(transition);
 			}
 		}
-		
+
 		return transitionMap;
 	}
 
@@ -359,6 +359,35 @@ public class AtlModel extends JsonObject implements Cloneable {
 			mayAtlModel.setTransitions(mayTransitions);
 //			mayAtlModel.setATL(this.getATL().transl(false));
 			return mayAtlModel;
+		}
+	}
+
+	public void makeTransitionsUnique() {
+		int id = 0;
+		for (Transition tr : transitions) {
+			for (List<AgentAction> acts : tr.getAgentActions()) {
+				for (AgentAction act : acts) {
+					String actAux = act.getAction();
+					act.setAction(act.getAction() + "_" + id++);
+					for (Agent ag : agents) {
+						if (ag.getName().equals(act.getAgent())) {
+							ag.getActions().remove(actAux);
+							ag.getActions().add(act.getAction());
+						}
+					}
+				}
+			}
+			List<MultipleAgentAction> multActs = new ArrayList<>();
+			for (MultipleAgentAction acts : tr.getMultipleAgentActions()) {
+				MultipleAgentAction newAct = new MultipleAgentAction();
+				newAct.setAgent(acts.getAgent());
+				newAct.setActions(new ArrayList<>());
+				for (String act : acts.getActions()) {
+					newAct.getActions().add(act + "_" + id++);
+				}
+				multActs.add(newAct);
+			}
+			tr.setMultipleAgentActions(multActs);
 		}
 	}
 

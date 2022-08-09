@@ -6,7 +6,7 @@ atlExpr : ('!' | 'not') child=atlExpr                                  # Negatio
      | ('eventually' | 'F') child=atlExpr                              # Eventually
      | ('always' | 'G') child=atlExpr                                  # Always
      | left=atlExpr ('until' | 'U') right=atlExpr                      # Until
-     | left=atlExpr ('release' | 'R') right=atlExpr                      # Release
+     | left=atlExpr ('release' | 'R') right=atlExpr                    # Release
      // boolean operators
      | left=atlExpr ('&&' | 'and') right=atlExpr                       # Conjunction
      | left=atlExpr ('||' | 'or') right=atlExpr                        # Disjunction
@@ -20,7 +20,7 @@ atlExpr : ('!' | 'not') child=atlExpr                                  # Negatio
 
 atomExpr : ATOM;
 
-ATOM : [_a-zA-Z][_a-zA-Z0-9]*;
+ATOM : [_a-z][_a-z0-9]*;
 
 WS        : [ \t\r\n\u000C]+ -> skip;
 

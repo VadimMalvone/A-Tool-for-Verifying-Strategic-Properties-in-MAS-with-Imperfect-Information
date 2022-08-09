@@ -147,6 +147,7 @@ public class StateCluster extends State {
 		List<String> coalition = group.getAgents();
 		Map<String, List<String>> mustActions = new HashMap<>();
 		for(String agent : coalition) {
+			mustActions.put(agent, new ArrayList<>());
 			for(String action : atlModel.getAgentMap().get(agent).getActions()) {
 				boolean toStateFound = false;
 				for(State fromChildState : childStates) {
@@ -157,7 +158,7 @@ public class StateCluster extends State {
 						}
 						for(List<AgentAction> agentActionList : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
 							for(AgentAction agentAction : agentActionList) {
-								if(agentAction.getAction().equals(action)) {
+								if(agentAction.getAgent().equals(agent) && agentAction.getAction().equals(action)) {
 									toStateFound = true;
 									break;
 								}
