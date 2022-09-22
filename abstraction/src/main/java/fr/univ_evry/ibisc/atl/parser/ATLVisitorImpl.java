@@ -71,6 +71,17 @@ public class ATLVisitorImpl extends ATLBaseVisitor<ATL> {
     }
 
     @Override
+    public ATL visitDisjunction(ATLParser.DisjunctionContext ctx) {
+        ATL.Or or = new ATL.Or(visit(ctx.left), visit(ctx.right));
+        ATL.Not not = new ATL.Not(or);
+//        LTL.Not notNot = new LTL.Not(not);
+//        closure.add(and);
+//        closure.add(not);
+//        closure.add(notNot);
+        return or;
+    }
+
+    @Override
     public ATL visitAlways(ATLParser.AlwaysContext ctx) {
         ATL subFormula = visit(ctx.getChild(1));
         ATL.Globally globally = new ATL.Globally(subFormula);

@@ -219,7 +219,7 @@ public class StateCluster extends State {
 		return agentActions;
 	}
 
-	public List<List<AgentAction>> hasMayTransition(StateCluster toStateCluster, AtlModel atlModel) {
+	public List<List<AgentAction>> hasMayTransition1(StateCluster toStateCluster, AtlModel atlModel) {
 		List<List<AgentAction>> agentActions = new ArrayList<>();
 		for (State fromChildState : childStates) {
 			for (State toChildState : toStateCluster.childStates) {
@@ -228,7 +228,31 @@ public class StateCluster extends State {
 				}
 			}
 		}
-		
+
+		return agentActions;
+	}
+	public List<List<AgentAction>> hasMayTransition(StateCluster toStateCluster, AtlModel atlModel, AtlModel must) {
+		List<List<AgentAction>> agentActions = new ArrayList<>();
+		for (State fromChildState : childStates) {
+			for (State toChildState : toStateCluster.childStates) {
+				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+					for (List<AgentAction> acts : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+						for (AgentAction act : acts) {
+							act.setAction(act.getAction() + "_" + fromChildState.getName());
+							for(Agent ag : atlModel.getAgents()) {
+								if(ag.getName().equals(act.getAgent())) {
+									if(!ag.getActions().contains(act.getAction())) {
+										ag.getActions().add(act.getAction());
+									}
+									break;
+								}
+							}
+						}
+						agentActions.add(acts);
+					}
+				}
+			}
+		}
 		return agentActions;
 	}
 

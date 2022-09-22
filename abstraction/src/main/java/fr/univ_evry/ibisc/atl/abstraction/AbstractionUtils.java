@@ -3,6 +3,8 @@ package fr.univ_evry.ibisc.atl.abstraction;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -23,8 +25,9 @@ import static fr.univ_evry.ibisc.atl.abstraction.TestParser.good;
 
 public class AbstractionUtils {
 	
-    private static final String MODEL_JSON_FILE_NAME = "modelCards.json"; //"modelKR.json";
+    private static final String MODEL_JSON_FILE_NAME = "model2Voters8Wait.json"; // "modelVoter.json"; //"modelKR.json"; //"modelCards.json";
 	private final static Log logger = LogFactory.getLog(AbstractionUtils.class);
+	private static AtlModel must;
 
 	public static List<StateCluster> getStateClusters(AtlModel atlModel) {
 		List<StateCluster> stateClusters = new ArrayList<>();
@@ -68,7 +71,7 @@ public class AbstractionUtils {
 		List<Transition> transitions = new ArrayList<>();
 		for (StateCluster fromStateCluster : stateClusters) {
 			for (StateCluster toStateCluster : stateClusters) {
-				List<List<AgentAction>> agentActions = fromStateCluster.hasMayTransition(toStateCluster, atlModel);
+				List<List<AgentAction>> agentActions = fromStateCluster.hasMayTransition(toStateCluster, atlModel, must);
 				createTransition(fromStateCluster, transitions, toStateCluster, agentActions);
 			}
 		}
@@ -79,9 +82,23 @@ public class AbstractionUtils {
 	public static List<Transition> getMustTransitions(final AtlModel atlModel, final List<StateCluster> stateClusters) {
 		List<Transition> transitions = new ArrayList<>();
 		for (StateCluster fromStateCluster : stateClusters) {
+			boolean found = false;
 			for (StateCluster toStateCluster : stateClusters) {
 				List<List<AgentAction>> agentActions = fromStateCluster.hasMustTransition(toStateCluster, atlModel);
+				if(!agentActions.isEmpty()) found = true;
 				createTransition(fromStateCluster, transitions, toStateCluster, agentActions);
+			}
+			if(!found) {
+				List<AgentAction> acts = new ArrayList<>();
+				for (Agent ag : atlModel.getAgents()) {
+					AgentAction act = new AgentAction();
+					act.setAgent(ag.getName());
+					act.setAction(ag.getActions().get(0));
+					acts.add(act);
+				}
+				List<List<AgentAction>> actsL = new ArrayList<>();
+				actsL.add(acts);
+				createTransition(fromStateCluster, transitions, fromStateCluster, actsL);
 			}
 		}
 		
@@ -708,6 +725,12 @@ public class AbstractionUtils {
 		return availableActionMap;
 	}
 
+	public static String modelCheckBR(String mcmasFilePath, int bound) throws IOException {
+		try(Scanner scanner = new Scanner(Runtime.getRuntime().exec("python /media/angelo/WorkData/mcmas-1.3.0/mcmas_br/atl3valued.py " + bound + " " + mcmasFilePath).getInputStream()).useDelimiter("\\A")) {
+			return scanner.hasNext() ? scanner.next() : "";
+		}
+	}
+
 	public static String modelCheck(String mcmasFilePath) throws IOException {
 		try(Scanner scanner = new Scanner(Runtime.getRuntime().exec("/media/angelo/WorkData/mcmas-1.3.0/mcmas " + mcmasFilePath).getInputStream()).useDelimiter("\\A")) {
 			return scanner.hasNext() ? scanner.next() : "";
@@ -717,6 +740,17 @@ public class AbstractionUtils {
 	public static boolean getMcmasResult(String mcmasOutput) {
 //		if(mcmasOutput.contains("error")) throw new RuntimeException("MCMAS error: \n\n" + mcmasOutput);
 		return  (mcmasOutput.contains("is TRUE in the model"));
+	}
+
+	public static Automaton.Outcome getMcmasResultBR(String mcmasOutput) {
+//		if(mcmasOutput.contains("error")) throw new RuntimeException("MCMAS error: \n\n" + mcmasOutput);
+		if(mcmasOutput.contains("Verification Result: TRUE")) {
+			return Automaton.Outcome.True;
+		} else if(mcmasOutput.contains("Verification Result: FALSE")) {
+			return Automaton.Outcome.False;
+		} else {
+			return Automaton.Outcome.Unknown;
+		}
 	}
 
 	public static boolean refinement(AtlModel abstractModelMust, AtlModel abstractModelMay, AtlModel model, StateCluster failureState) { //, Abstraction kind) {
@@ -733,6 +767,7 @@ public class AbstractionUtils {
 		while(update) {
 			update = check2(failureState, m);
 		}
+		AtlModel model1 = model.clone();
 		for(State s1 : failureState.getChildStates()) {
 			for (State s2 : failureState.getChildStates()) {
 				//if(s1.equals(s2)) continue;
@@ -788,17 +823,17 @@ public class AbstractionUtils {
 //					}
 					for(State sAux : abstractModelMay.getStates()) {
 						StateCluster s = (StateCluster) sAux;
-						createTransition(v, abstractModelMay.getTransitions(), s, v.hasMayTransition(s, model));
-						createTransition(s, abstractModelMay.getTransitions(), v, s.hasMayTransition(v, model));
-						createTransition(w, abstractModelMay.getTransitions(), s, w.hasMayTransition(s, model));
-						createTransition(s, abstractModelMay.getTransitions(), w, s.hasMayTransition(w, model));
+						createTransition(v, abstractModelMay.getTransitions(), s, v.hasMayTransition(s, model, null));
+						createTransition(s, abstractModelMay.getTransitions(), v, s.hasMayTransition(v, model, null));
+						createTransition(w, abstractModelMay.getTransitions(), s, w.hasMayTransition(s, model, null));
+						createTransition(s, abstractModelMay.getTransitions(), w, s.hasMayTransition(w, model, null));
 					}
 					for(State sAux : abstractModelMust.getStates()) {
 						StateCluster s = (StateCluster) sAux;
-						createTransition(v, abstractModelMust.getTransitions(), s, v.hasMustTransition(s, model));
-						createTransition(s, abstractModelMust.getTransitions(), v, s.hasMustTransition(v, model));
-						createTransition(w, abstractModelMust.getTransitions(), s, w.hasMustTransition(s, model));
-						createTransition(s, abstractModelMust.getTransitions(), w, s.hasMustTransition(w, model));
+						createTransition(v, abstractModelMust.getTransitions(), s, v.hasMustTransition(s, model1));
+						createTransition(s, abstractModelMust.getTransitions(), v, s.hasMustTransition(v, model1));
+						createTransition(w, abstractModelMust.getTransitions(), s, w.hasMustTransition(s, model1));
+						createTransition(s, abstractModelMust.getTransitions(), w, s.hasMustTransition(w, model1));
 					}
 					abstractModelMay.setStateMap(null);
 					abstractModelMust.setStateMap(null);
@@ -1047,8 +1082,18 @@ public class AbstractionUtils {
 		}
 	}
 
+	public static Automaton.Outcome modelCheckingProcedureBR(AtlModel atlModel, int bound) throws IOException {
+		String mcmasProgram = AbstractionUtils.generateMCMASProgram(atlModel, false);
+		String fileName = "/tmp/model.ispl";
+		Files.write(Paths.get(fileName), mcmasProgram.getBytes());
+		String mcmasOutputAtlModel = AbstractionUtils.modelCheckBR(fileName, bound);
+		return AbstractionUtils.getMcmasResultBR(mcmasOutputAtlModel);
+	}
+
 	public static Automaton.Outcome modelCheckingProcedure(AtlModel atlModel) throws IOException {
+		atlModel.getAgentActionsByStates();
 		AtlModel atlModelMust = atlModel.createAbstraction(AtlModel.Abstraction.Must);
+		must = atlModelMust;
 		AtlModel atlModelMay = atlModel.createAbstraction(AtlModel.Abstraction.May);
 		State state = atlModel.getStates().stream().filter(State::isInitial).findAny().get();
 		atlModelMust.getStates().forEach(s -> s.setInitial(s instanceof StateCluster && ((StateCluster) s).containsChildState(state)));

@@ -131,11 +131,47 @@ public class AtlModel extends JsonObject implements Cloneable {
 				if (!agentActionsByStates.containsKey(transition.getFromState(), transition.getToState())) {
 					agentActionsByStates.put(transition.getFromState(), transition.getToState(), new ArrayList<>());
 				}
-				agentActionsByStates.get(transition.getFromState(), transition.getToState()).addAll(transition.getAgentActions());
+				if(!transition.getAgentActions().isEmpty()) {
+					agentActionsByStates.get(transition.getFromState(), transition.getToState()).addAll(transition.getAgentActions());
+				}
+				if(!transition.getMultipleAgentActions().isEmpty()) {
+					int n = transition.getMultipleAgentActions().size();
+					Integer[] aux = new Integer[n];
+					for(int i = 0; i < n; i++) {
+						aux[i] = 0;
+					}
+					int m = 1;
+					for(MultipleAgentAction mAct : transition.getMultipleAgentActions()) {
+						m *= mAct.getActions().size();
+					}
+					List<List<AgentAction>> agActsL = new ArrayList<>();
+					for(int j = 0; j < m; j++) {
+						List<AgentAction> agActs = new ArrayList<>();
+						boolean inc = true;
+						for(int i = 0; i < n; i++) {
+							String agent = transition.getMultipleAgentActions().get(i).getAgent();
+							String action = transition.getMultipleAgentActions().get(i).getActions().get(aux[i]);
+							agActs.add(new AgentAction(agent, action));
+							if(inc) {
+								aux[i] = (aux[i] + 1) % transition.getMultipleAgentActions().get(i).getActions().size();
+								if(aux[i] != 0) {
+									inc = false;
+								}
+							}
+						}
+						agActsL.add(agActs);
+					}
+					agentActionsByStates.get(transition.getFromState(), transition.getToState()).addAll(agActsL);
+				}
+
 			}
 		}
 
 		return agentActionsByStates;
+	}
+
+	public void setAgentActionsByStates(MultiKeyMap<String, List<List<AgentAction>>> map) {
+		this.agentActionsByStates = map;
 	}
 
 	public Map<String, List<Transition>> getTransitionMap() {
@@ -290,6 +326,7 @@ public class AtlModel extends JsonObject implements Cloneable {
 		clone.atl = getATL().clone();
 		clone.agentMap = null;
 		clone.stateMap = null;
+		clone.agentActionsByStates = null;
 		return clone;
 	}
 
@@ -344,19 +381,23 @@ public class AtlModel extends JsonObject implements Cloneable {
 
 	public AtlModel createAbstraction(Abstraction kind) {
 		if(kind == Abstraction.Must) {
-			List<StateCluster> mustStateClusters = AbstractionUtils.getStateClusters(this);
-			List<Transition> mustTransitions = AbstractionUtils.getMustTransitions(this, mustStateClusters);
 			AtlModel mustAtlModel = this.clone();
+			List<StateCluster> mustStateClusters = AbstractionUtils.getStateClusters(mustAtlModel);
+			List<Transition> mustTransitions = AbstractionUtils.getMustTransitions(mustAtlModel, mustStateClusters);
 			mustAtlModel.setStates(mustStateClusters);
 			mustAtlModel.setTransitions(mustTransitions);
+			mustAtlModel.setStateMap(null);
+			mustAtlModel.setAgentActionsByStates(null);
 //			mustAtlModel.setATL(this.getATL().transl(true));
 			return mustAtlModel;
 		} else {
-			List<StateCluster> mayStateClusters = AbstractionUtils.getStateClusters(this);
-			List<Transition> mayTransitions = AbstractionUtils.getMayTransitions(this, mayStateClusters);
 			AtlModel mayAtlModel = this.clone();
+			List<StateCluster> mayStateClusters = AbstractionUtils.getStateClusters(mayAtlModel);
+			List<Transition> mayTransitions = AbstractionUtils.getMayTransitions(mayAtlModel, mayStateClusters);
 			mayAtlModel.setStates(mayStateClusters);
 			mayAtlModel.setTransitions(mayTransitions);
+			mayAtlModel.setStateMap(null);
+			mayAtlModel.setAgentActionsByStates(null);
 //			mayAtlModel.setATL(this.getATL().transl(false));
 			return mayAtlModel;
 		}

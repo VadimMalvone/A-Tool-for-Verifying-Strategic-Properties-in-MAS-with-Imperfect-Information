@@ -52,5 +52,13 @@ public class MultipleAgentAction extends JsonObject implements Comparable<Multip
 		}
 		return agent.equals(((MultipleAgentAction)obj).getAgent()) && CollectionUtils.isEqualCollection(actions, ((MultipleAgentAction)obj).getActions());
 	}
+
+	public List<AgentAction> toAgentActions() {
+		List<AgentAction> result = new ArrayList<>();
+		for(String action : actions) {
+			result.add(new AgentAction(agent, action));
+		}
+		return result;
+	}
 }
 

@@ -20,12 +20,14 @@ public class TestParser {
 //        File file = new File("./tmp/results" + minStates + "_" + maxStates + "_" + minAgents + "_" + maxAgents + "_" + percImperfect1 + ".csv");
 //        FileWriter fw = new FileWriter(file);
         Random rnd = new Random();
-        for(double percImperfect = 0.5; percImperfect <= 1; percImperfect+=0.1) {
+        for(double percImperfect = 0.1; percImperfect <= 1; percImperfect+=0.1) {
             int nSuccesses = 0;
+            int nSuccessesBR = 0;
             //int nRights = 0;
             int nSuccessesSt = 0;
             long avgMCMASTime = 0;
             long avgOursTime = 0;
+            long avgBRTime = 0;
             for (int i = 0; i < nRuns; i++) {
                 //System.out.println("Run n. " + i + " of " + nRuns);
                 int nStates = rnd.nextInt(maxStates - minStates + 1) + minStates;
@@ -120,7 +122,6 @@ public class TestParser {
                 m.makeTransitionsUnique();
                 try {
                     Stopwatch stopwatch = Stopwatch.createStarted();
-                    stopwatch = Stopwatch.createStarted();
                     Automaton.Outcome res = AbstractionUtils.modelCheckingProcedure(m);
                     stopwatch.stop();
                     avgOursTime += stopwatch.elapsed().toMillis();
@@ -129,10 +130,20 @@ public class TestParser {
                     } else if (res == Automaton.Outcome.False) {
                         nSuccesses++;
                     }
+                    stopwatch = Stopwatch.createStarted();
+                    res = AbstractionUtils.modelCheckingProcedureBR(m, 20);
+                    stopwatch.stop();
+                    avgBRTime += stopwatch.elapsed().toMillis();
+                    if (res == Automaton.Outcome.True) {
+                        nSuccessesBR++;
+                    } else if (res == Automaton.Outcome.False) {
+                        nSuccessesBR++;
+                    }
                 } catch (Exception e){ i--; }
             }
             System.out.println("Perc: " + percImperfect);
-           System.out.println("Number of times our procedure returns a final verdict: " + nSuccesses + " (" + (((double) nSuccesses) / nRuns * 100) + "%)" + "[" + (avgOursTime/nRuns) + " ms]");
+            System.out.println("Number of times our procedure returns a final verdict: " + nSuccesses + " (" + (((double) nSuccesses) / nRuns * 100) + "%)" + "[" + (avgOursTime/nRuns) + " ms]");
+            System.out.println("Number of times bounded recall procedure returns a final verdict: " + nSuccessesBR + " (" + (((double) nSuccessesBR) / nRuns * 100) + "%)" + "[" + (avgBRTime/nRuns) + " ms]");
         }
     }
 
@@ -208,16 +219,17 @@ public class TestParser {
 //        for(List<String> labels : atlModel.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
 //            alphabet.addAll(labels);
 //        }
-        alphabet.add("a_tt"); alphabet.add("a_ff");
-        alphabet.add("b_tt"); alphabet.add("b_ff");
-        alphabet.add("c_tt"); alphabet.add("c_ff");
-        Automaton automaton = new Automaton(pt, pt.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
-        FileWriter fw = new FileWriter("automaton.dot");
-        fw.write(automaton.toDot());
-        fw.close();
-        fw = new FileWriter("automaton.hoa");
-        fw.write(automaton.toHOA());
-        fw.close();
+
+//        alphabet.add("a_tt"); alphabet.add("a_ff");
+//        alphabet.add("b_tt"); alphabet.add("b_ff");
+//        alphabet.add("c_tt"); alphabet.add("c_ff");
+//        Automaton automaton = new Automaton(pt, pt.getClosure(), Automaton.Outcome.Unknown, alphabet, true);
+//        FileWriter fw = new FileWriter("automaton.dot");
+//        fw.write(automaton.toDot());
+//        fw.close();
+//        fw = new FileWriter("automaton.hoa");
+//        fw.write(automaton.toHOA());
+//        fw.close();
 //
 //
 //
@@ -239,8 +251,11 @@ public class TestParser {
         System.out.println("Output: " + AbstractionUtils.modelCheckingProcedure(atlModel));
         stopwatch.stop();
         System.out.println(stopwatch.elapsed().toMillis() + " [ms]");
+        // ours: True, 1160 [ms]
+        // BR: ?, 215 [ms]
 
-//        runExperiments(30, 30, 6, 6, 10, 5000);
+//        runExperiments(5, 5, 2, 2, 10, 1000);
+
 //        int nRuns = 5;
 //        int nStates = 100;
 //        int dFormula = 10;
