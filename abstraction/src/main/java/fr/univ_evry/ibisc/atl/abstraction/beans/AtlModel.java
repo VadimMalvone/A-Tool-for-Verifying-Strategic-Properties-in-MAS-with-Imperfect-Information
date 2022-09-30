@@ -449,10 +449,10 @@ public class AtlModel extends JsonObject implements Cloneable {
 
 	public static Automaton.Outcome modelCheck(ATL property, AtlModel mustAtlModel, AtlModel mayAtlModel) throws IOException {
 		Automaton.Outcome result;
-		if(auxiliary1(property.transl(true), mustAtlModel, mayAtlModel)) {
-			result = Automaton.Outcome.True;
-		} else if(auxiliary1(property.transl(false), mustAtlModel, mayAtlModel)) {
+		if(auxiliary1(property.transl(false), mustAtlModel, mayAtlModel)) {
 			result = Automaton.Outcome.False;
+		} else if(auxiliary1(property.transl(true), mustAtlModel, mayAtlModel)) {
+			result = Automaton.Outcome.True;
 		} else {
 			result = Automaton.Outcome.Unknown;
 		}
@@ -465,11 +465,16 @@ public class AtlModel extends JsonObject implements Cloneable {
 		while(!(property instanceof ATL.Atom || (property instanceof ATL.Not && ((ATL.Not) property).getSubFormula() instanceof ATL.Atom))) {
 			ATL property1 = property.innermostFormula();
 			atom = "auxiliary_atom_" + i++;
-			if(property1 instanceof ATL.Existential) {
-				auxiliary2(property1, atom, mustAtlModel, mayAtlModel);
-			} else {
+			if(property instanceof ATL.Not && ((ATL.Not) property).getSubFormula() instanceof ATL.Existential) {
 				auxiliary2(property1, atom, mayAtlModel, mustAtlModel);
+			} else {
+				auxiliary2(property1, atom, mustAtlModel, mayAtlModel);
 			}
+//			if(property1 instanceof ATL.Existential) {
+//				auxiliary2(property1, atom, mustAtlModel, mayAtlModel);
+//			} else {
+//				auxiliary2(property1, atom, mayAtlModel, mustAtlModel);
+//			}
 			property = property.updateInnermostFormula(atom);
 		}
 		String finalAtom = atom;

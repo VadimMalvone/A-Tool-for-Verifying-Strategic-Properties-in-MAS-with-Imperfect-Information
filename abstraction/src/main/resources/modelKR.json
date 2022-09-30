@@ -56,7 +56,8 @@
          "actions": [
             "i",
             "l",
-            "r"
+            "r",
+            "m"
          ],
          "indistinguishableStates": [
             [
@@ -449,6 +450,6 @@
          ]
       }
    ],
-   "formula": "<g1>X(l1 and <g1>X(b or <g1>F(g)))"
+   "formula": "<g1>X(l1 and <g1>X(!b or <g1>F(g)))"
   }
 

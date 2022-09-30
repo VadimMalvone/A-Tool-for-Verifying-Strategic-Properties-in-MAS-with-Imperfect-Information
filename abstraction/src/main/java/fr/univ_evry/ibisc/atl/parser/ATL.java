@@ -825,12 +825,22 @@ public abstract class ATL implements Cloneable {
 
         @Override
         public ATL innermostFormula() {
-            return subFormula.innermostFormula();
+            ATL atl = subFormula.innermostFormula();
+//            if(atl == subFormula) {
+//                return this;
+//            } else {
+                return atl;
+//            }
         }
 
         @Override
-        public Not updateInnermostFormula(String atom) {
-            return new Not(subFormula.updateInnermostFormula(atom));
+        public ATL updateInnermostFormula(String atom) {
+//            ATL atl = subFormula.updateInnermostFormula(atom);
+//            if(atl instanceof Atom && ((Atom) atl).atom.equals(atom)) {
+//                return atl;
+//            } else {
+                return new Not(subFormula.updateInnermostFormula(atom));
+//            }
         }
 
         @Override
@@ -878,6 +888,7 @@ public abstract class ATL implements Cloneable {
             } else {
 //                return new Universal(group, subFormula.transl(false, check));
                 return new Not(new Existential(group, subFormula.transl(true, true)));
+//                return new Existential(group, subFormula.transl(false, check));
             }
         }
 
@@ -955,7 +966,8 @@ public abstract class ATL implements Cloneable {
         public ATL transl(boolean v, boolean check) {
             if(v) {
 //                return new Universal(group, subFormula.transl(true, check));
-                return new Not(new Existential(group, subFormula.transl(true, true)));
+//                return new Not(new Existential(group, subFormula.transl(true, true)));
+                return new Existential(group, subFormula.transl(false, true));
             } else {
                 return new Existential(group, subFormula.transl(false, check));
             }

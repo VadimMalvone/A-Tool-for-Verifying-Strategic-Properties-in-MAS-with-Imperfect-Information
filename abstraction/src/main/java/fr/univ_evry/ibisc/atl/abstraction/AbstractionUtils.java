@@ -25,7 +25,7 @@ import static fr.univ_evry.ibisc.atl.abstraction.TestParser.good;
 
 public class AbstractionUtils {
 	
-    private static final String MODEL_JSON_FILE_NAME = "model2Voters8Wait.json"; // "modelVoter.json"; //"modelKR.json"; //"modelCards.json";
+    private static final String MODEL_JSON_FILE_NAME = "modelVoter.json"; // "modelVoter.json"; //"modelKR.json"; //"modelCards.json";
 	private final static Log logger = LogFactory.getLog(AbstractionUtils.class);
 	private static AtlModel must;
 
@@ -81,6 +81,18 @@ public class AbstractionUtils {
 	
 	public static List<Transition> getMustTransitions(final AtlModel atlModel, final List<StateCluster> stateClusters) {
 		List<Transition> transitions = new ArrayList<>();
+		State sinkState = new State();
+		sinkState.setName("sink");
+		Set<String> aux = new HashSet<>();
+		Set<String> aux1 = new HashSet<>();
+		for(String l : atlModel.getStates().get(0).getLabels()) {
+			aux.add(l.replace("_tt", "_uu").replace("_ff", "_uu"));
+			if(!l.contains("_uu")) aux1.add(l);
+		}
+		sinkState.setLabels(new ArrayList<>(aux));
+		sinkState.setFalseLabels(new ArrayList<>(aux1));
+		sinkState = new StateCluster(sinkState);
+		boolean sinkAdded = false;
 		for (StateCluster fromStateCluster : stateClusters) {
 			boolean found = false;
 			for (StateCluster toStateCluster : stateClusters) {
@@ -98,10 +110,17 @@ public class AbstractionUtils {
 				}
 				List<List<AgentAction>> actsL = new ArrayList<>();
 				actsL.add(acts);
-				createTransition(fromStateCluster, transitions, fromStateCluster, actsL);
+//				List<State> newStates = new ArrayList<>(atlModel.getStates());
+//				newStates.add(sinkState);
+//				atlModel.setStates(newStates);
+//				atlModel.setStateMap(null);
+				createTransition(fromStateCluster, transitions, sinkState, actsL);
+				sinkAdded = true;
 			}
 		}
-		
+		if(sinkAdded) {
+			stateClusters.add((StateCluster) sinkState);
+		}
 		return transitions;
 	}
 	
@@ -1037,6 +1056,21 @@ public class AbstractionUtils {
 				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.And) formula).getLeft());
 			} else {
 				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.And) formula).getRight());
+			}
+		} else if(formula instanceof ATL.Or) {
+			Set<String> alphabet = new HashSet<>();
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getLabels).collect(Collectors.toList())) {
+				alphabet.addAll(labels);
+			}
+			for(List<String> labels : atlModelMust.getStates().stream().map(State::getFalseLabels).collect(Collectors.toList())) {
+				alphabet.addAll(labels);
+			}
+			Automaton automaton = new Automaton(((ATL.Or) formula).getLeft(), ((ATL.Or) formula).getLeft().getClosure(), Automaton.Outcome.Unknown, alphabet, true);
+//			Automaton product = atlModel.toAutomaton().product(automaton);
+			if(path.product(automaton).getPath() != null) {
+				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.Or) formula).getLeft());
+			} else {
+				return failurePath(atlModelMust, atlModelMay, atlModel, path, ((ATL.Or) formula).getRight());
 			}
 		} else if(formula instanceof ATL.Next) {
 			path.moveInitialStateof(1);
