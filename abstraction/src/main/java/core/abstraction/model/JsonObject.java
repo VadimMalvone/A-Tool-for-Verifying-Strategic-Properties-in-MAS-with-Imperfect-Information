@@ -1,4 +1,4 @@
-package fr.univ_evry.ibisc.atl.abstraction.beans;
+package core.abstraction.model;
 
 import java.io.File;
 import java.io.FileReader;

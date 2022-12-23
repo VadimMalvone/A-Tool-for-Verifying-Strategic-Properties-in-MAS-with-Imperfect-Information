@@ -1,9 +1,9 @@
-package fr.univ_evry.ibisc.atl.abstraction.beans;
+package core.abstraction.model;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fr.univ_evry.ibisc.atl.parser.ATL;
+import core.parser.StrategyLogic;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -54,18 +54,18 @@ public class StateCluster extends State {
 	}
 
 	private void setLabels() {
-		List<String> posLabels = new ArrayList<>();
-		List<String> negLabels = new ArrayList<>();
+		Set<String> posLabels = new HashSet<>();
+		Set<String> negLabels = new HashSet<>();
 		if (!childStates.isEmpty()) {
 			List<String> labels =
 					childStates.get(0).getLabels()
-					.stream().map(l -> l.substring(0, l.length()-3)).collect(Collectors.toList());
+					.stream().map(l -> l.substring(0, l.length()-3)).toList();
 
 			posLabels.addAll(childStates.get(0).getLabels());
 //			negLabels.addAll(childStates.get(0).getFalseLabels());
 			for (int i = 1; i < childStates.size(); i++) {
-				posLabels = ListUtils.intersection(posLabels, childStates.get(i).getLabels());
-//				negLabels = ListUtils.intersection(negLabels, childStates.get(i).getFalseLabels());
+				posLabels.retainAll(childStates.get(i).getLabels());
+//				posLabels = ListUtils.intersection(posLabels, childStates.get(i).getLabels());
 			}
 			for(String l : labels) {
 				if(posLabels.contains(l + "_tt")) {
@@ -75,11 +75,13 @@ public class StateCluster extends State {
 				}
 				else {
 					posLabels.add(l + "_uu");
+					negLabels.add(l + "_tt");
+					negLabels.add(l + "_ff");
 				}
 			}
 		}
-		setLabels(posLabels);
-		setFalseLabels(negLabels);
+		setLabels(new ArrayList<>(posLabels));
+		setFalseLabels(new ArrayList<>(negLabels));
 	}
 	
 //	private void setLabels() {
@@ -114,13 +116,13 @@ public class StateCluster extends State {
 		return CollectionUtils.containsAny(childStates, stateCluster.childStates);
 	}
 
-//	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, AtlModel atlModel) {
+//	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, CGSModel CGSModel) {
 //		List<List<AgentAction>> agentActions = new ArrayList<>();
 //		for (State fromChildState : childStates) {
 //			boolean toStateFound = false;
 //			for (State toChildState : toStateCluster.childStates) {
-//				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
-//					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
+//				if (CGSModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+//					agentActions.addAll(CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
 //					toStateFound = true;
 //				}
 //			}
@@ -134,29 +136,23 @@ public class StateCluster extends State {
 //		return agentActions;
 //	}
 
-	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, AtlModel atlModel) {
-		// to be checked (here, we are assuming a simple ATL property with only one strategic operator. What to do with formulae like: <A>F<B>Xp?)
-		Group group = new Group();
-		for(Group g : atlModel.getGroups()) {
-			if(g.getName().equals(((ATL.Existential)(atlModel.getATL())).getGroup())) {
-				group = g;
-				break;
-			}
-		}
-		//
+	public List<List<AgentAction>> hasMustTransition(StateCluster toStateCluster, CGSModel CGSModel) {
+		Group group = CGSModel.getGroups().get(0);
+//		group.getAgents().add("Environment");
+
 		List<String> coalition = group.getAgents();
 		Map<String, List<String>> mustActions = new HashMap<>();
 		for(String agent : coalition) {
 			mustActions.put(agent, new ArrayList<>());
-			for(String action : atlModel.getAgentMap().get(agent).getActions()) {
+			for(String action : CGSModel.getAgentMap().get(agent).getActions()) {
 				boolean toStateFound = false;
 				for(State fromChildState : childStates) {
 					toStateFound = false;
 					for(State toChildState : toStateCluster.childStates) {
-						if(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()) == null) {
+						if(CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()) == null) {
 							continue;
 						}
-						for(List<AgentAction> agentActionList : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+						for(List<AgentAction> agentActionList : CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
 							for(AgentAction agentAction : agentActionList) {
 								if(agentAction.getAgent().equals(agent) && agentAction.getAction().equals(action)) {
 									toStateFound = true;
@@ -196,9 +192,9 @@ public class StateCluster extends State {
 		List<List<AgentAction>> agentActions = new ArrayList<>();
 		for (State fromChildState : childStates) {
 			for (State toChildState : toStateCluster.childStates) {
-				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+				if (CGSModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
 					List<List<AgentAction>> aux = new ArrayList<>();
-					for(List<AgentAction> agentActionList : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+					for(List<AgentAction> agentActionList : CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
 						boolean valid = true;
 						for(String agent : mustActions.keySet()) {
 							Optional<AgentAction> optAct = agentActionList.stream().filter(a -> a.getAgent().equals(agent) && mustActions.get(agent).contains(a.getAction())).findAny();
@@ -211,7 +207,7 @@ public class StateCluster extends State {
 							agentActions.add(agentActionList);
 						}
 					}
-					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
+					agentActions.addAll(CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
 				}
 			}
 		}
@@ -219,27 +215,27 @@ public class StateCluster extends State {
 		return agentActions;
 	}
 
-	public List<List<AgentAction>> hasMayTransition1(StateCluster toStateCluster, AtlModel atlModel) {
+	public List<List<AgentAction>> hasMayTransition1(StateCluster toStateCluster, CGSModel CGSModel) {
 		List<List<AgentAction>> agentActions = new ArrayList<>();
 		for (State fromChildState : childStates) {
 			for (State toChildState : toStateCluster.childStates) {
-				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
-					agentActions.addAll(atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
+				if (CGSModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+					agentActions.addAll(CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName()));
 				}
 			}
 		}
 
 		return agentActions;
 	}
-	public List<List<AgentAction>> hasMayTransition(StateCluster toStateCluster, AtlModel atlModel, AtlModel must) {
+	public List<List<AgentAction>> hasMayTransition(StateCluster toStateCluster, CGSModel CGSModel, CGSModel must) {
 		List<List<AgentAction>> agentActions = new ArrayList<>();
 		for (State fromChildState : childStates) {
 			for (State toChildState : toStateCluster.childStates) {
-				if (atlModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
-					for (List<AgentAction> acts : atlModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
+				if (CGSModel.getAgentActionsByStates().containsKey(fromChildState.getName(), toChildState.getName())) {
+					for (List<AgentAction> acts : CGSModel.getAgentActionsByStates().get(fromChildState.getName(), toChildState.getName())) {
 						for (AgentAction act : acts) {
 							act.setAction(act.getAction() + "_" + fromChildState.getName());
-							for(Agent ag : atlModel.getAgents()) {
+							for(Agent ag : CGSModel.getAgents()) {
 								if(ag.getName().equals(act.getAgent())) {
 									if(!ag.getActions().contains(act.getAction())) {
 										ag.getActions().add(act.getAction());
