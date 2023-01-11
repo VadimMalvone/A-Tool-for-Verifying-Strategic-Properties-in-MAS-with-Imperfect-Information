@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
-			<version>4.10.1</version>
+			<version>4.9.2</version>
 		</dependency>
 	</dependencies>
 	
@@ -90,7 +90,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>core.abstraction.TestParser</mainClass>
+							<mainClass>fr.univ_evry.ibisc.atl.abstraction.MainInformationSharing</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

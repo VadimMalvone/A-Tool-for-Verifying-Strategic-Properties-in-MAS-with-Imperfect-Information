@@ -1,0 +1,92 @@
+
+Agent Environment
+	Vars :
+		sI : boolean;
+		swin : boolean;
+		win : boolean;
+		slose : boolean;
+	end Vars
+	Actions = {};
+	Protocol :
+	end Protocol
+	Evolution :
+		sI = false and swin = true and win = true  if sI = true and swin = false and win = false and ((a1.Action = a) and 
+					(a2.Action = a or a2.Action = b) and 
+					(a3.Action = a));
+		sI = false and slose = true  if sI = true and slose = false and ((a1.Action = a) and 
+					(a2.Action = a or a2.Action = b) and 
+					(a3.Action = b));
+		sI = false and slose = true  if sI = true and slose = false and ((a1.Action = b) and 
+					(a2.Action = a or a2.Action = b) and 
+					(a3.Action = a));
+		swin = true and win = true  if swin = true and win = true and ((a1.Action = a or a1.Action = b) and 
+					(a2.Action = a or a2.Action = b) and 
+					(a3.Action = a or a3.Action = b));
+		slose = true  if slose = true and ((a1.Action = a or a1.Action = b) and 
+					(a2.Action = a or a2.Action = b) and 
+					(a3.Action = a or a3.Action = b));
+	end Evolution
+end Agent
+Agent a1
+	Lobsvars = {sI, swin, win, slose};
+	Vars : 
+
+		play : boolean;
+	end Vars
+	Actions = {a,b};
+	Protocol : 
+		Environment.sI = true : {a,b};
+		Environment.swin = true and Environment.win = true : {a,b};
+		Environment.slose = true : {a,b};
+	end Protocol
+	Evolution : 
+		play = true if play = true;
+	end Evolution
+end Agent
+Agent a2
+	Lobsvars = {sI, swin, win, slose};
+	Vars : 
+
+		play : boolean;
+	end Vars
+	Actions = {a,b};
+	Protocol : 
+		Environment.sI = true : {a,b};
+		Environment.swin = true and Environment.win = true : {a,b};
+		Environment.slose = true : {a,b};
+	end Protocol
+	Evolution : 
+		play = true if play = true;
+	end Evolution
+end Agent
+Agent a3
+	Lobsvars = {sI, swin, win, slose};
+	Vars : 
+
+		play : boolean;
+	end Vars
+	Actions = {a,b};
+	Protocol : 
+		Environment.sI = true : {a,b};
+		Environment.swin = true and Environment.win = true : {a,b};
+		Environment.slose = true : {a,b};
+	end Protocol
+	Evolution : 
+		play = true if play = true;
+	end Evolution
+end Agent
+Evaluation
+	win if (Environment.win = true);
+	end Evaluation
+	InitStates
+		Environment.sI = true and 
+		Environment.swin = false and 
+		Environment.slose = false and 
+		Environment.win = false;
+	end InitStates
+Groups
+	g1={a1,a2,a3};
+end Groups
+Formulae
+	<g1>F(win);
+end Formulae
