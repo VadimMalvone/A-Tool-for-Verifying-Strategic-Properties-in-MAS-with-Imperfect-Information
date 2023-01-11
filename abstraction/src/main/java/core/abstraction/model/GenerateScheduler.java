@@ -1,14 +1,75 @@
 package core.abstraction.model;
 
+import core.parser.StrategyLogic;
 import org.checkerframework.checker.units.qual.A;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GenerateScheduler {
+    public static String generateRandomProperty(int nProcesses) {
+        Random random = new Random();
+        StringBuilder formula = new StringBuilder();
+//        if(random.nextBoolean()) {
+            formula.append("<<e>> ");
+            formula.append("<<x>> ");
+            for(int i = 1; i <= nProcesses; i++) {
+                formula.append("<<y").append(i).append(">> ");
+            }
+//        } else {
+//            formula.append("[[e]] ");
+//            formula.append("[[x]] ");
+//            for(int i = 1; i <= nProcesses; i++) {
+//                formula.append("[[y").append(i).append("]] ");
+//            }
+//        }
+        formula.append("(Environment, e) ");
+        formula.append("(Arbiter, x) ");
+        for(int i = 1; i <= nProcesses; i++) {
+            formula.append("(Process").append(i).append(", y").append(i).append(") ");
+        }
+        int nTOp = random.nextInt(2)+1;
+        for(int i = 0; i < nTOp; i++) {
+            if(random.nextBoolean()) {
+                if(random.nextBoolean()) {
+                    formula.append("F(");
+                } else {
+                    formula.append("X(");
+                }
+            } else {
+                if(random.nextBoolean()) {
+                    formula.append("G(");
+                } else {
+                    formula.append("!(");
+                }
+            }
+        }
+        int nAt = random.nextInt(nProcesses)+1;
+        for(int i = 1; i <= nAt; i++) {
+            if(random.nextBoolean()) {
+                if(random.nextBoolean()) {
+                    formula.append("rs").append(i);
+                } else {
+                    formula.append("!rs").append(i);
+                }
+            } else {
+                if(random.nextBoolean()) {
+                    formula.append("wt").append(i);
+                } else {
+                    formula.append("!wt").append(i);
+                }
+            }
+            if(i != nAt) {
+                if(random.nextBoolean()) {
+                    formula.append(" and ");
+                } else {
+                    formula.append(" or ");
+                }
+            }
+        }
+        formula.append(")".repeat(nTOp));
+        return formula.toString();
+    }
     public static CGSModel generate(int nProcesses) {
         CGSModel model = new CGSModel();
         List<String> arbiterActionsS = new ArrayList<>();
@@ -245,12 +306,14 @@ public class GenerateScheduler {
         }
         formula.append("F(");
         for(int i = 1; i < nProcesses; i++) {
-            for(int j = i + 1; j <= nProcesses; j++) {
-                formula.append("(" + "rs").append(i).append(" and ").append("!rs").append(j).append(")");
-                if(j != nProcesses) {
-                    formula.append(" or ");
+            formula.append("(");
+            formula.append("rs").append(i);
+            for(int j = 1; j <= nProcesses; j++) {
+                if(i != j) {
+                    formula.append(" and ").append("!rs").append(j);
                 }
             }
+            formula.append(")");
             if(i != nProcesses - 1) {
                 formula.append(" or ");
             }

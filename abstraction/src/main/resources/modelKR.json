@@ -437,19 +437,14 @@
    ],
    "groups": [
       {
-         "name": "g1",
+         "name": "g",
          "agents": [
             "Train1",
-            "Controller"
-         ]
-      },
-      {
-         "name": "g2",
-         "agents": [
+            "Train2",
             "Controller"
          ]
       }
    ],
-   "formula": "<g1>X(l1 and <g1>X(!b or <g1>F(g)))"
+   "formula": "<<t1>> (Train1, t1) <<t2>> (Train2, t2) <<c>> (Controller, c) <<e>> (Environment, e) X(l1 and X(!b or F(g)))"
   }
 

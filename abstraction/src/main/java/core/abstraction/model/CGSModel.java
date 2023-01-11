@@ -344,32 +344,32 @@ public class CGSModel extends JsonObject implements Cloneable {
 		}
 	}
 
-	public static Outcome modelCheck(CGSModel model) throws IOException {
+	public static Outcome modelCheck(CGSModel model, String mcmasExecPath) throws IOException {
 		String mcmasProgram = AbstractionUtils.generateMCMASProgram(model, false);
 		String fileName = "/tmp/st.ispl";
 		Files.write(Paths.get(fileName), mcmasProgram.getBytes());
-		String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
-		if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
+		String mcmasOutputAtlModel = AbstractionUtils.modelCheck(mcmasExecPath, fileName);
+		if (AbstractionUtils.getMcmasResult(mcmasOutputAtlModel)) {
 			return Outcome.True;
 		} else {
 			return Outcome.False;
 		}
 	}
 
-	public static Outcome modelCheck3(CGSModel modelMust, CGSModel modelMay) throws IOException {
+	public static Outcome modelCheck3(CGSModel modelMust, CGSModel modelMay, String mcmasExecPath) throws IOException {
 		boolean universal = modelMust.getSL() instanceof StrategyLogic.Universal;
 		if(universal) {
 			modelMust.setSL(modelMust.getSL().transl(false));
 			String mcmasMustProgram = AbstractionUtils.generateMCMASProgram(modelMust, false);
 			String fileName = "/tmp/st.ispl";
 			Files.write(Paths.get(fileName), mcmasMustProgram.getBytes());
-			String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
+			String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(mcmasExecPath, fileName);
 			if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
 				return Outcome.False;
 			}
 			String mcmasMayProgram = AbstractionUtils.generateMCMASProgram(modelMay, false);
 			Files.write(Paths.get(fileName), mcmasMayProgram.getBytes());
-			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(fileName);
+			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(mcmasExecPath, fileName);
 			if (AbstractionUtils.getMcmasResult(mcmasOutputMayAtlModel)) {
 				return Outcome.True;
 			}
@@ -377,14 +377,14 @@ public class CGSModel extends JsonObject implements Cloneable {
 			String mcmasMustProgram = AbstractionUtils.generateMCMASProgram(modelMust, false);
 			String fileName = "/tmp/st.ispl";
 			Files.write(Paths.get(fileName), mcmasMustProgram.getBytes());
-			String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(fileName);
+			String mcmasOutputMustAtlModel = AbstractionUtils.modelCheck(mcmasExecPath, fileName);
 			if (AbstractionUtils.getMcmasResult(mcmasOutputMustAtlModel)) {
 				return Outcome.True;
 			}
 			modelMay.setSL(modelMay.getSL().transl(false));
 			String mcmasMayProgram = AbstractionUtils.generateMCMASProgram(modelMay, false);
 			Files.write(Paths.get(fileName), mcmasMayProgram.getBytes());
-			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(fileName);
+			String mcmasOutputMayAtlModel = AbstractionUtils.modelCheck(mcmasExecPath, fileName);
 			if (AbstractionUtils.getMcmasResult(mcmasOutputMayAtlModel)) {
 				return Outcome.False;
 			}

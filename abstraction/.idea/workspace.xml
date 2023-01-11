@@ -6,36 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="1f9f3e85-eb2f-49d9-baac-e837e4fa83bb" name="Default Changelist" comment="Some bug fix">
       <change afterPath="$PROJECT_DIR$/.idea/artifacts/abstraction_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/automaton.dot" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/automaton.gv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/automaton.hoa" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/results.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/results_old.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AutomatonMain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/modelCards.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/abstraction.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/antlr4/ATL.g4" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/antlr4/ATL.g4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLBaseVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLBaseVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.interp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.interp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLLexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/ATLVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/univ_evry/ibisc/atl/parser/Automaton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/abstraction-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/abstraction-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/abstraction-0.0.1-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/abstraction-0.0.1-SNAPSHOT.jar.original" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/State.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/State.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,9 +207,9 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1548423605047" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2874859" />
     <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
@@ -236,9 +224,10 @@
   </component>
   <component name="RunAnythingCache">
     <option name="myCommands">
-      <command value="mvn compile" />
       <command value="mvn deploy" />
       <command value="mvn install" />
+      <command value="mvn clean" />
+      <command value="mvn compile" />
     </option>
   </component>
   <component name="RunManager" selected="Application.Parser">
@@ -390,7 +379,10 @@
       <workItem from="1649076193120" duration="107000" />
       <workItem from="1650380040847" duration="21000" />
       <workItem from="1653373137030" duration="15000" />
-      <workItem from="1660033652072" duration="15570000" />
+      <workItem from="1660033652072" duration="15677000" />
+      <workItem from="1660127052158" duration="168000" />
+      <workItem from="1660297645049" duration="3000" />
+      <workItem from="1660735414165" duration="320000" />
     </task>
     <task id="LOCAL-00001" summary="must transitions generation updated">
       <created>1617869568765</created>
@@ -462,7 +454,14 @@
       <option name="project" value="LOCAL" />
       <updated>1638862821203</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Some bug fix">
+      <created>1660057709009</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1660057709009</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
