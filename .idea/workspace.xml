@@ -5,39 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7bf96ce5-0d75-4cbe-ae58-3f8604d72e2c" name="Default Changelist" comment="voters example">
-      <change afterPath="$PROJECT_DIR$/abstraction/.idea/artifacts/abstraction_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/automaton.dot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/automaton.gv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/automaton.hoa" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/results.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/results_old.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/MainInformationSharing.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/abstraction/src/main/resources/modelVotersCopy.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/TestParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/src/main/java/fr/univ_evry/ibisc/atl/parser/ATL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/abstraction-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/abstraction-0.0.1-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/abstraction-0.0.1-SNAPSHOT.jar.original" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/AbstractionUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/App.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Agent.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Agent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AgentAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AgentAction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/AtlModel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Group.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Group.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/JsonObject.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/JsonObject.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/MultipleAgentAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/MultipleAgentAction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/State.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/State.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/StateCluster.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/TransformBean.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Transition.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/beans/Transition.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/controllers/AbstractionController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/abstraction/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/TestParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/abstraction/target/classes/fr/univ_evry/ibisc/atl/abstraction/TestParser.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +62,7 @@
       <recent name="$PROJECT_DIR$/abstraction/src/main/resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.All in A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information">
+  <component name="RunManager" selected="Application.TestParser">
     <configuration name="InformationSharing" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="openjdk-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -132,8 +101,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.All in A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information" />
         <item itemvalue="Application.TestParser" />
+        <item itemvalue="JUnit.All in A-Tool-for-Verifying-Strategic-Properties-in-MAS-with-Imperfect-Information" />
       </list>
     </recent_temporary>
   </component>
@@ -179,6 +148,9 @@
       <workItem from="1671720361847" duration="3000" />
       <workItem from="1671805996441" duration="140000" />
       <workItem from="1673446592797" duration="73000" />
+      <workItem from="1673446853253" duration="188000" />
+      <workItem from="1673447069250" duration="51000" />
+      <workItem from="1673534699808" duration="3000" />
     </task>
     <task id="LOCAL-00001" summary="voters example">
       <created>1663848304743</created>
